@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>アサノダンススクール予約システム</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+  <div class="min-h-screen p-4">
+    <div class="max-w-md mx-auto">
+      <div class="text-center pt-6 pb-4">
+        <h1 class="text-2xl font-bold mb-1">レッスン予約</h1>
+        <p class="text-sm text-gray-600">アサノダンススクール</p>
+        <div id="connectionStatus" class="mt-2 text-xs bg-yellow-100 text-yellow-800 py-2 px-4 rounded">
+          🔄 Firebase接続中...
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow p-6">
+        <h2 class="text-lg font-bold mb-4">予約フォーム</h2>
+        
+        <form id="bookingForm" class="space-y-4">
+          <div>
+            <label class="block text-sm font-semibold mb-2">お名前 *</label>
+            <input type="text" id="name" required class="w-full p-2 border-2 rounded" placeholder="山田 太郎">
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold mb-2">電話番号 *</label>
+            <input type="tel" id="phone" required class="w-full p-2 border-2 rounded" placeholder="090-1234-5678">
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold mb-2">メールアドレス</label>
+            <input type="email" id="email" class="w-full p-2 border-2 rounded" placeholder="example@email.com">
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold mb-2">希望日 *</label>
+            <input type="date" id="date" required class="w-full p-2 border-2 rounded">
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold mb-2">希望時間 *</label>
+            <select id="time" required class="w-full p-2 border-2 rounded">
+              <option value="">選択してください</option>
+              <option value="10:00">10:00</option>
+              <option value="11:00">11:00</option>
+              <option value="14:00">14:00</option>
+              <option value="15:00">15:00</option>
+              <option value="16:00">16:00</option>
+              <option value="17:00">17:00</option>
+              <option value="18:00">18:00</option>
+              <option value="19:00">19:00</option>
+              <option value="20:00">20:00</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold mb-2">レッスン種類 *</label>
+            <select id="lessonType" required class="w-full p-2 border-2 rounded">
+              <option value="">選択してください</option>
+              <option value="無料体験">無料体験レッスン</option>
+              <option value="グループ">グループレッスン</option>
+              <option value="個人">個人レッスン</option>
+              <option value="カップル">カップルレッスン</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold mb-2">ご要望</label>
+            <textarea id="message" rows="3" class="w-full p-2 border-2 rounded resize-none" placeholder="気になることがあればお書きください"></textarea>
+          </div>
+
+          <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded font-semibold hover:bg-blue-700">
+            予約を送信
+          </button>
+        </form>
+
+        <div class="mt-6 pt-6 border-t">
+          <button id="viewBookingsBtn" class="w-full bg-gray-100 text-gray-700 py-2 rounded hover:bg-gray-200">
+            予約一覧を表示
+          </button>
+        </div>
+      </div>
+
+      <div id="bookingsList" class="mt-4 hidden">
+        <div class="bg-white rounded-lg shadow p-6">
+          <h2 class="text-lg font-bold mb-4">予約一覧</h2>
+          <div id="bookingsContent"></div>
+          <button id="hideBookingsBtn" class="mt-4 w-full bg-gray-100 py-2 rounded">閉じる</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    // Firebase SDKのインポート
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getFirestore, collection, addDoc, getDocs, query, orderBy } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+    // Firebase設定
+    const firebaseConfig = {
+      apiKey: "AIzaSyDbcAHRmhBGfUoqpf-LzgyrPdSRmGeJtDU",
+      authDomain: "asano-dance-school-8b670.firebaseapp.com",
+      projectId: "asano-dance-school-8b670",
+      storageBucket: "asano-dance-school-8b670.firebasestorage.app",
+      messagingSenderId: "167959563019",
+      appId: "1:167959563019:web:840229f09cbcf86ae3300e"
+    };
+
+    // Firebaseの初期化
+    let app, db;
+    try {
+      app = initializeApp(firebaseConfig);
+      db = getFirestore(app);
+      
+      // 接続成功表示
+      document.getElementById('connectionStatus').className = 'mt-2 text-xs bg-green-100 text-green-800 py-2 px-4 rounded';
+      document.getElementById('connectionStatus').textContent = '🔥 Firebase接続済み - データはクラウドに保存されます';
+      
+      console.log('✅ Firebase接続成功！');
+    } catch (error) {
+      console.error('Firebase初期化エラー:', error);
+      document.getElementById('connectionStatus').className = 'mt-2 text-xs bg-red-100 text-red-800 py-2 px-4 rounded';
+      document.getElementById('connectionStatus').textContent = '❌ Firebase接続エラー';
+    }
+
+    // 予約送信
+    document.getElementById('bookingForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      submitBtn.disabled = true;
+      submitBtn.textContent = '送信中...';
+      
+      const bookingData = {
+        name: document.getElementById('name').value,
+        phone: document.getElementById('phone').value,
+        email: document.getElementById('email').value || '',
+        date: document.getElementById('date').value,
+        time: document.getElementById('time').value,
+        lessonType: document.getElementById('lessonType').value,
+        message: document.getElementById('message').value || '',
+        createdAt: new Date().toISOString(),
+        status: 'confirmed'
+      };
+
+      try {
+        const docRef = await addDoc(collection(db, 'bookings'), bookingData);
+        console.log('予約ID:', docRef.id);
+        
+        alert('✅ 予約が完了しました！\n\nFirebaseに保存されました。');
+        document.getElementById('bookingForm').reset();
+      } catch (error) {
+        console.error('予約エラー:', error);
+        alert('❌ 予約の送信に失敗しました。\n\nエラー: ' + error.message);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = '予約を送信';
+      }
+    });
+
+    // 予約一覧表示
+    document.getElementById('viewBookingsBtn').addEventListener('click', async () => {
+      try {
+        const bookingsQuery = query(collection(db, 'bookings'));
+        const querySnapshot = await getDocs(bookingsQuery);
+        
+        let html = '';
+        if (querySnapshot.empty) {
+          html = '<p class="text-gray-500 text-center py-4">予約がありません</p>';
+        } else {
+          const bookings = [];
+          querySnapshot.forEach((doc) => {
+            bookings.push({ id: doc.id, ...doc.data() });
+          });
+          
+          // 日付順にソート
+          bookings.sort((a, b) => {
+            const dateA = new Date(a.date + ' ' + a.time);
+            const dateB = new Date(b.date + ' ' + b.time);
+            return dateA - dateB;
+          });
+          
+          bookings.forEach((booking) => {
+            html += `
+              <div class="border rounded p-4 mb-3">
+                <div class="font-bold">${booking.name}</div>
+                <div class="text-sm text-gray-600 mt-2 space-y-1">
+                  <div>📅 ${booking.date} ${booking.time}</div>
+                  <div>📚 ${booking.lessonType}</div>
+                  <div>📞 ${booking.phone}</div>
+                  ${booking.email ? `<div>📧 ${booking.email}</div>` : ''}
+                  ${booking.message ? `<div class="mt-2 p-2 bg-yellow-50 rounded">💬 ${booking.message}</div>` : ''}
+                </div>
+              </div>
+            `;
+          });
+        }
+        
+        document.getElementById('bookingsContent').innerHTML = html;
+        document.getElementById('bookingsList').classList.remove('hidden');
+      } catch (error) {
+        console.error('予約取得エラー:', error);
+        alert('❌ 予約の取得に失敗しました。\n\nエラー: ' + error.message);
+      }
+    });
+
+    // 一覧を閉じる
+    document.getElementById('hideBookingsBtn').addEventListener('click', () => {
+      document.getElementById('bookingsList').classList.add('hidden');
+    });
+
+    // 日付の最小値を今日に設定
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('date').setAttribute('min', today);
+  </script>
+</body>
+</html>
