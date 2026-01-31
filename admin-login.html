@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>管理画面ログイン - アサノダンススクール</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+  <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
+    <div class="text-center mb-8">
+      <h1 class="text-2xl font-bold text-gray-800 mb-2">管理画面</h1>
+      <p class="text-sm text-gray-600">アサノダンススクール</p>
+    </div>
+
+    <form id="loginForm" class="space-y-6">
+      <div>
+        <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+          メールアドレス
+        </label>
+        <input 
+          type="email" 
+          id="email" 
+          required 
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          placeholder="admin@example.com"
+        >
+      </div>
+
+      <div>
+        <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
+          パスワード
+        </label>
+        <input 
+          type="password" 
+          id="password" 
+          required 
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          placeholder="••••••••"
+        >
+      </div>
+
+      <div id="errorMessage" class="hidden text-red-600 text-sm text-center bg-red-50 p-3 rounded-lg">
+      </div>
+
+      <button 
+        type="submit" 
+        id="loginBtn"
+        class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition duration-200"
+      >
+        ログイン
+      </button>
+    </form>
+
+    <div class="mt-6 text-center">
+      <a href="index.html" class="text-sm text-gray-600 hover:text-gray-800">
+        ← 予約フォームに戻る
+      </a>
+    </div>
+  </div>
+
+  <script type="module">
+    // Firebase SDKのインポート
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getAuth, signInWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+
+    // Firebase設定
+    const firebaseConfig = {
+      apiKey: "AIzaSyDbcAHRmhBGfUoqpf-LzgyrPdSRmGeJtDU",
+      authDomain: "asano-dance-school-8b670.firebaseapp.com",
+      projectId: "asano-dance-school-8b670",
+      storageBucket: "asano-dance-school-8b670.firebasestorage.app",
+      messagingSenderId: "167959563019",
+      appId: "1:167959563019:web:840229f09cbcf86ae3300e"
+    };
+
+    // Firebaseの初期化
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // ログインフォームの処理
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const loginBtn = document.getElementById('loginBtn');
+      const errorMessage = document.getElementById('errorMessage');
+      
+      // エラーメッセージを非表示
+      errorMessage.classList.add('hidden');
+      
+      // ボタンを無効化
+      loginBtn.disabled = true;
+      loginBtn.textContent = 'ログイン中...';
+      
+      try {
+        // Firebase Authenticationでログイン
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        console.log('✅ ログイン成功:', userCredential.user.email);
+        
+        // 管理画面にリダイレクト
+        window.location.href = 'admin-dashboard.html';
+        
+      } catch (error) {
+        console.error('❌ ログインエラー:', error);
+        
+        // エラーメッセージを表示
+        let message = 'ログインに失敗しました。';
+        
+        if (error.code === 'auth/invalid-email') {
+          message = 'メールアドレスの形式が正しくありません。';
+        } else if (error.code === 'auth/user-not-found') {
+          message = 'このメールアドレスは登録されていません。';
+        } else if (error.code === 'auth/wrong-password') {
+          message = 'パスワードが正しくありません。';
+        } else if (error.code === 'auth/invalid-credential') {
+          message = 'メールアドレスまたはパスワードが正しくありません。';
+        }
+        
+        errorMessage.textContent = message;
+        errorMessage.classList.remove('hidden');
+        
+        // ボタンを再度有効化
+        loginBtn.disabled = false;
+        loginBtn.textContent = 'ログイン';
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>管理画面 - アサノダンススクール</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+  <!-- ヘッダー -->
+  <header class="bg-white shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+      <div>
+        <h1 class="text-xl font-bold text-gray-800">アサノダンススクール</h1>
+        <p class="text-sm text-gray-600">管理画面</p>
+      </div>
+      <div class="flex items-center space-x-4">
+        <span id="userEmail" class="text-sm text-gray-600"></span>
+        <button id="logoutBtn" class="text-sm text-red-600 hover:text-red-800">
+          ログアウト
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="max-w-7xl mx-auto px-4 py-8">
+    <!-- ナビゲーション -->
+    <nav class="mb-8">
+      <div class="flex space-x-1 bg-white rounded-lg p-1 shadow-sm">
+        <button class="nav-btn active px-4 py-2 rounded-lg font-medium text-sm" data-section="dashboard">
+          ダッシュボード
+        </button>
+        <button class="nav-btn px-4 py-2 rounded-lg font-medium text-sm" data-section="bookings">
+          予約管理
+        </button>
+        <button class="nav-btn px-4 py-2 rounded-lg font-medium text-sm" data-section="staff">
+          スタッフ管理
+        </button>
+        <button class="nav-btn px-4 py-2 rounded-lg font-medium text-sm" data-section="schedule">
+          スケジュール
+        </button>
+      </div>
+    </nav>
+
+    <!-- ダッシュボード -->
+    <div id="dashboardSection" class="section">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <!-- 統計カード -->
+        <div class="bg-white p-6 rounded-lg shadow">
+          <div class="text-sm text-gray-600 mb-2">今日の予約</div>
+          <div class="text-3xl font-bold text-blue-600" id="todayBookings">0</div>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow">
+          <div class="text-sm text-gray-600 mb-2">今週の予約</div>
+          <div class="text-3xl font-bold text-green-600" id="weekBookings">0</div>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow">
+          <div class="text-sm text-gray-600 mb-2">総予約数</div>
+          <div class="text-3xl font-bold text-gray-800" id="totalBookings">0</div>
+        </div>
+      </div>
+
+      <!-- 最近の予約 -->
+      <div class="bg-white rounded-lg shadow">
+        <div class="p-6 border-b">
+          <h2 class="text-lg font-bold">最近の予約</h2>
+        </div>
+        <div id="recentBookings" class="p-6">
+          <p class="text-gray-500 text-center py-8">読み込み中...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 予約管理 -->
+    <div id="bookingsSection" class="section hidden">
+      <div class="bg-white rounded-lg shadow">
+        <div class="p-6 border-b">
+          <h2 class="text-lg font-bold">予約一覧</h2>
+        </div>
+        <div id="allBookings" class="p-6">
+          <p class="text-gray-500 text-center py-8">読み込み中...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- スタッフ管理 -->
+    <div id="staffSection" class="section hidden">
+      <div class="bg-white rounded-lg shadow">
+        <div class="p-6 border-b">
+          <h2 class="text-lg font-bold">スタッフ一覧</h2>
+        </div>
+        <div class="p-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="staffList">
+            <!-- スタッフ情報がここに表示されます -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- スケジュール -->
+    <div id="scheduleSection" class="section hidden">
+      <div class="bg-white rounded-lg shadow">
+        <div class="p-6 border-b">
+          <h2 class="text-lg font-bold">週間スケジュール</h2>
+        </div>
+        <div class="p-6">
+          <div id="weeklySchedule">
+            <!-- スケジュールがここに表示されます -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    // Firebase SDKのインポート
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+    import { getFirestore, collection, getDocs, query, orderBy, deleteDoc, doc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+    // Firebase設定
+    const firebaseConfig = {
+      apiKey: "AIzaSyDbcAHRmhBGfUoqpf-LzgyrPdSRmGeJtDU",
+      authDomain: "asano-dance-school-8b670.firebaseapp.com",
+      projectId: "asano-dance-school-8b670",
+      storageBucket: "asano-dance-school-8b670.firebasestorage.app",
+      messagingSenderId: "167959563019",
+      appId: "1:167959563019:web:840229f09cbcf86ae3300e"
+    };
+
+    // Firebaseの初期化
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // スタッフ情報
+    const staffData = {
+      asano: {
+        name: "浅野英之",
+        specialty: ["スタンダード"],
+        schedule: {
+          monday: { start: "11:00", end: "20:00" },
+          tuesday: { start: "11:00", end: "20:00" },
+          wednesday: { start: "11:00", end: "20:00" },
+          thursday: { start: "11:00", end: "20:00" },
+          friday: { start: "11:00", end: "20:00" }
+        }
+      },
+      tsunokake: {
+        name: "角掛英典",
+        specialty: ["スタンダード"],
+        schedule: {
+          monday: { start: "12:00", end: "19:00" },
+          friday: { start: "12:00", end: "19:00" }
+        }
+      },
+      suzuki: {
+        name: "鈴木善子",
+        specialty: ["スタンダード", "ラテンアメリカン"],
+        schedule: {
+          wednesday: { start: "12:00", end: "18:00" }
+        }
+      },
+      hosaka: {
+        name: "穂坂 礼",
+        specialty: ["スタンダード"],
+        schedule: {
+          monday: { start: "12:00", end: "19:00" },
+          friday: { start: "14:30", end: "19:00" }
+        }
+      },
+      mimoto: {
+        name: "見元克至",
+        specialty: ["スタンダード", "ラテンアメリカン"],
+        schedule: {
+          monday: { start: "12:00", end: "15:30" },
+          friday: { start: "12:00", end: "15:30" }
+        }
+      },
+      nakayama: {
+        name: "仲山 領",
+        specialty: ["スタンダード", "ラテンアメリカン"],
+        schedule: {
+          thursday: { start: "12:00", end: "14:30" }
+        }
+      }
+    };
+
+    // 認証チェック
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        document.getElementById('userEmail').textContent = user.email;
+        loadDashboard();
+      } else {
+        window.location.href = 'admin-login.html';
+      }
+    });
+
+    // ログアウト
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      if (confirm('ログアウトしますか?')) {
+        await signOut(auth);
+        window.location.href = 'admin-login.html';
+      }
+    });
+
+    // ナビゲーション
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        // アクティブ状態を切り替え
+        document.querySelectorAll('.nav-btn').forEach(b => {
+          b.classList.remove('active', 'bg-blue-600', 'text-white');
+          b.classList.add('text-gray-600', 'hover:bg-gray-100');
+        });
+        btn.classList.add('active', 'bg-blue-600', 'text-white');
+        btn.classList.remove('text-gray-600', 'hover:bg-gray-100');
+
+        // セクションを切り替え
+        const section = btn.getAttribute('data-section');
+        document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
+        document.getElementById(section + 'Section').classList.remove('hidden');
+
+        // セクションごとのデータ読み込み
+        if (section === 'bookings') loadAllBookings();
+        if (section === 'staff') loadStaffList();
+        if (section === 'schedule') loadWeeklySchedule();
+      });
+    });
+
+    // ダッシュボード読み込み
+    async function loadDashboard() {
+      try {
+        const bookingsQuery = query(collection(db, 'bookings'), orderBy('createdAt', 'desc'));
+        const querySnapshot = await getDocs(bookingsQuery);
+        
+        const bookings = [];
+        querySnapshot.forEach((doc) => {
+          bookings.push({ id: doc.id, ...doc.data() });
+        });
+
+        // 統計を計算
+        const today = new Date().toISOString().split('T')[0];
+        const todayBookings = bookings.filter(b => b.date === today);
+        
+        const now = new Date();
+        const weekStart = new Date(now.setDate(now.getDate() - now.getDay()));
+        const weekEnd = new Date(weekStart);
+        weekEnd.setDate(weekEnd.getDate() + 6);
+        const weekBookings = bookings.filter(b => {
+          const bookingDate = new Date(b.date);
+          return bookingDate >= weekStart && bookingDate <= weekEnd;
+        });
+
+        document.getElementById('todayBookings').textContent = todayBookings.length;
+        document.getElementById('weekBookings').textContent = weekBookings.length;
+        document.getElementById('totalBookings').textContent = bookings.length;
+
+        // 最近の予約を表示
+        displayRecentBookings(bookings.slice(0, 5));
+        
+      } catch (error) {
+        console.error('データ読み込みエラー:', error);
+      }
+    }
+
+    // 最近の予約を表示
+    function displayRecentBookings(bookings) {
+      const container = document.getElementById('recentBookings');
+      
+      if (bookings.length === 0) {
+        container.innerHTML = '<p class="text-gray-500 text-center py-8">予約がありません</p>';
+        return;
+      }
+
+      let html = '<div class="space-y-4">';
+      bookings.forEach(booking => {
+        html += `
+          <div class="border rounded-lg p-4 hover:bg-gray-50">
+            <div class="flex justify-between items-start mb-2">
+              <div class="font-semibold text-gray-800">${booking.name}</div>
+              <div class="text-sm text-gray-500">${new Date(booking.createdAt).toLocaleDateString('ja-JP')}</div>
+            </div>
+            <div class="grid grid-cols-2 gap-2 text-sm text-gray-600">
+              <div>📅 ${booking.date} ${booking.time}</div>
+              <div>📚 ${booking.lessonType}</div>
+              <div>📞 ${booking.phone}</div>
+              ${booking.email ? `<div>📧 ${booking.email}</div>` : ''}
+            </div>
+          </div>
+        `;
+      });
+      html += '</div>';
+      
+      container.innerHTML = html;
+    }
+
+    // 全予約を表示
+    async function loadAllBookings() {
+      try {
+        const bookingsQuery = query(collection(db, 'bookings'), orderBy('date', 'asc'));
+        const querySnapshot = await getDocs(bookingsQuery);
+        
+        const bookings = [];
+        querySnapshot.forEach((doc) => {
+          bookings.push({ id: doc.id, ...doc.data() });
+        });
+
+        const container = document.getElementById('allBookings');
+        
+        if (bookings.length === 0) {
+          container.innerHTML = '<p class="text-gray-500 text-center py-8">予約がありません</p>';
+          return;
+        }
+
+        let html = '<div class="space-y-3">';
+        bookings.forEach(booking => {
+          html += `
+            <div class="border rounded-lg p-4 hover:bg-gray-50">
+              <div class="flex justify-between items-start mb-3">
+                <div>
+                  <div class="font-semibold text-gray-800 mb-1">${booking.name}</div>
+                  <div class="text-sm text-gray-600">📞 ${booking.phone}</div>
+                  ${booking.email ? `<div class="text-sm text-gray-600">📧 ${booking.email}</div>` : ''}
+                </div>
+                <button onclick="deleteBooking('${booking.id}')" class="text-red-600 hover:text-red-800 text-sm">
+                  削除
+                </button>
+              </div>
+              <div class="grid grid-cols-3 gap-2 text-sm">
+                <div class="bg-blue-50 p-2 rounded">
+                  <div class="text-xs text-gray-600">日時</div>
+                  <div class="font-medium">${booking.date} ${booking.time}</div>
+                </div>
+                <div class="bg-green-50 p-2 rounded">
+                  <div class="text-xs text-gray-600">レッスン</div>
+                  <div class="font-medium">${booking.lessonType}</div>
+                </div>
+                <div class="bg-gray-50 p-2 rounded">
+                  <div class="text-xs text-gray-600">ステータス</div>
+                  <div class="font-medium">${booking.status || '確定'}</div>
+                </div>
+              </div>
+              ${booking.message ? `<div class="mt-3 p-2 bg-yellow-50 rounded text-sm">💬 ${booking.message}</div>` : ''}
+            </div>
+          `;
+        });
+        html += '</div>';
+        
+        container.innerHTML = html;
+        
+      } catch (error) {
+        console.error('予約読み込みエラー:', error);
+      }
+    }
+
+    // 予約削除
+    window.deleteBooking = async function(bookingId) {
+      if (!confirm('この予約を削除しますか?')) return;
+      
+      try {
+        await deleteDoc(doc(db, 'bookings', bookingId));
+        alert('予約を削除しました');
+        loadAllBookings();
+        loadDashboard();
+      } catch (error) {
+        console.error('削除エラー:', error);
+        alert('削除に失敗しました');
+      }
+    };
+
+    // スタッフリスト表示
+    function loadStaffList() {
+      const container = document.getElementById('staffList');
+      let html = '';
+      
+      Object.entries(staffData).forEach(([id, staff]) => {
+        const workDays = Object.keys(staff.schedule).map(day => {
+          const dayNames = {
+            monday: '月', tuesday: '火', wednesday: '水',
+            thursday: '木', friday: '金', saturday: '土', sunday: '日'
+          };
+          return dayNames[day];
+        }).join('・');
+
+        html += `
+          <div class="border rounded-lg p-4">
+            <div class="font-semibold text-gray-800 mb-2">${staff.name}</div>
+            <div class="space-y-1 text-sm">
+              <div class="text-gray-600">
+                <span class="font-medium">担当:</span> ${staff.specialty.join('・')}
+              </div>
+              <div class="text-gray-600">
+                <span class="font-medium">勤務:</span> ${workDays}曜日
+              </div>
+            </div>
+          </div>
+        `;
+      });
+      
+      container.innerHTML = html;
+    }
+
+    // 週間スケジュール表示
+    function loadWeeklySchedule() {
+      const container = document.getElementById('weeklySchedule');
+      const days = ['月', '火', '水', '木', '金'];
+      const dayKeys = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
+      
+      let html = '<div class="space-y-6">';
+      
+      days.forEach((day, index) => {
+        const dayKey = dayKeys[index];
+        const staffOnDuty = Object.entries(staffData).filter(([id, staff]) => 
+          staff.schedule[dayKey]
+        );
+
+        html += `
+          <div class="border rounded-lg p-4">
+            <h3 class="font-bold text-lg mb-3">${day}曜日</h3>
+            ${staffOnDuty.length === 0 ? 
+              '<p class="text-gray-500">勤務スタッフなし</p>' :
+              '<div class="space-y-2">' +
+              staffOnDuty.map(([id, staff]) => `
+                <div class="flex justify-between items-center bg-gray-50 p-3 rounded">
+                  <div>
+                    <div class="font-medium">${staff.name}</div>
+                    <div class="text-sm text-gray-600">${staff.specialty.join('・')}</div>
+                  </div>
+                  <div class="text-sm font-medium text-blue-600">
+                    ${staff.schedule[dayKey].start} - ${staff.schedule[dayKey].end}
+                  </div>
+                </div>
+              `).join('') +
+              '</div>'
+            }
+          </div>
+        `;
+      });
+      
+      html += '</div>';
+      container.innerHTML = html;
+    }
+
+    // 初期化時にactiveクラスを設定
+    document.querySelector('.nav-btn.active').classList.add('bg-blue-600', 'text-white');
+  </script>
+</body>
+</html>
