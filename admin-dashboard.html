@@ -26,17 +26,20 @@
   <div class="max-w-7xl mx-auto px-4 py-8">
     <!-- ナビゲーション -->
     <nav class="mb-8">
-      <div class="flex space-x-1 bg-white rounded-lg p-1 shadow-sm">
-        <button class="nav-btn active px-4 py-2 rounded-lg font-medium text-sm" data-section="dashboard">
+      <div class="flex space-x-1 bg-white rounded-lg p-1 shadow-sm overflow-x-auto">
+        <button class="nav-btn active px-4 py-2 rounded-lg font-medium text-sm whitespace-nowrap" data-section="dashboard">
           ダッシュボード
         </button>
-        <button class="nav-btn px-4 py-2 rounded-lg font-medium text-sm" data-section="bookings">
+        <button class="nav-btn px-4 py-2 rounded-lg font-medium text-sm whitespace-nowrap" data-section="calendar">
+          📅 カレンダー
+        </button>
+        <button class="nav-btn px-4 py-2 rounded-lg font-medium text-sm whitespace-nowrap" data-section="bookings">
           予約管理
         </button>
-        <button class="nav-btn px-4 py-2 rounded-lg font-medium text-sm" data-section="staff">
+        <button class="nav-btn px-4 py-2 rounded-lg font-medium text-sm whitespace-nowrap" data-section="staff">
           スタッフ管理
         </button>
-        <button class="nav-btn px-4 py-2 rounded-lg font-medium text-sm" data-section="schedule">
+        <button class="nav-btn px-4 py-2 rounded-lg font-medium text-sm whitespace-nowrap" data-section="schedule">
           スケジュール
         </button>
       </div>
@@ -67,6 +70,39 @@
         </div>
         <div id="recentBookings" class="p-6">
           <p class="text-gray-500 text-center py-8">読み込み中...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 予約管理 -->
+    <div id="bookingsSection" class="section hidden">
+
+    <!-- カレンダー -->
+    <div id="calendarSection" class="section hidden">
+      <div class="bg-white rounded-lg shadow">
+        <div class="p-6 border-b flex justify-between items-center">
+          <button id="prevMonth" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium">
+            ← 前月
+          </button>
+          <h2 class="text-lg font-bold" id="currentMonth"></h2>
+          <button id="nextMonth" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium">
+            次月 →
+          </button>
+        </div>
+        <div class="p-6">
+          <div id="calendarGrid" class="grid grid-cols-7 gap-2">
+            <!-- カレンダーがここに表示されます -->
+          </div>
+        </div>
+      </div>
+
+      <!-- 選択した日の予約詳細 -->
+      <div id="dayDetails" class="mt-6 bg-white rounded-lg shadow hidden">
+        <div class="p-6 border-b">
+          <h3 class="text-lg font-bold" id="selectedDate"></h3>
+        </div>
+        <div id="dayBookings" class="p-6">
+          <!-- 予約詳細がここに表示されます -->
         </div>
       </div>
     </div>
@@ -221,10 +257,166 @@
         document.getElementById(section + 'Section').classList.remove('hidden');
 
         // セクションごとのデータ読み込み
+        if (section === 'calendar') loadCalendar();
         if (section === 'bookings') loadAllBookings();
         if (section === 'staff') loadStaffList();
         if (section === 'schedule') loadWeeklySchedule();
       });
+    });
+
+    // カレンダー関連の変数
+    let currentYear = new Date().getFullYear();
+    let currentMonth = new Date().getMonth();
+    let allBookingsData = [];
+
+    // カレンダー読み込み
+    async function loadCalendar() {
+      // 予約データを取得
+      try {
+        const bookingsQuery = query(collection(db, 'bookings'), orderBy('date', 'asc'));
+        const querySnapshot = await getDocs(bookingsQuery);
+        
+        allBookingsData = [];
+        querySnapshot.forEach((doc) => {
+          allBookingsData.push({ id: doc.id, ...doc.data() });
+        });
+
+        renderCalendar();
+        
+      } catch (error) {
+        console.error('カレンダー読み込みエラー:', error);
+      }
+    }
+
+    // カレンダー描画
+    function renderCalendar() {
+      const year = currentYear;
+      const month = currentMonth;
+      
+      // 月の表示
+      const monthNames = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+      document.getElementById('currentMonth').textContent = `${year}年 ${monthNames[month]}`;
+      
+      // カレンダーグリッド
+      const firstDay = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      
+      let html = '';
+      
+      // 曜日ヘッダー
+      const dayNames = ['日', '月', '火', '水', '木', '金', '土'];
+      dayNames.forEach(day => {
+        html += `<div class="text-center font-semibold text-gray-600 py-2">${day}</div>`;
+      });
+      
+      // 空白セル（月の最初の曜日まで）
+      for (let i = 0; i < firstDay; i++) {
+        html += '<div class="aspect-square"></div>';
+      }
+      
+      // 日付セル
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const bookingsOnDay = allBookingsData.filter(b => b.date === dateStr);
+        const count = bookingsOnDay.length;
+        
+        const isToday = dateStr === new Date().toISOString().split('T')[0];
+        const isSunday = (firstDay + day - 1) % 7 === 0;
+        const isSaturday = (firstDay + day - 1) % 7 === 6;
+        
+        let bgColor = 'bg-white hover:bg-gray-50';
+        let textColor = 'text-gray-800';
+        
+        if (isToday) {
+          bgColor = 'bg-blue-50 hover:bg-blue-100';
+          textColor = 'text-blue-600 font-bold';
+        }
+        if (isSunday) textColor = 'text-red-600';
+        if (isSaturday) textColor = 'text-blue-600';
+        
+        html += `
+          <div class="aspect-square border rounded-lg ${bgColor} cursor-pointer transition" onclick="showDayDetails('${dateStr}')">
+            <div class="h-full flex flex-col p-2">
+              <div class="${textColor} text-sm font-medium">${day}</div>
+              ${count > 0 ? `
+                <div class="flex-1 flex items-center justify-center">
+                  <div class="bg-blue-600 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
+                    ${count}
+                  </div>
+                </div>
+              ` : ''}
+            </div>
+          </div>
+        `;
+      }
+      
+      document.getElementById('calendarGrid').innerHTML = html;
+    }
+
+    // 日付の詳細を表示
+    window.showDayDetails = function(dateStr) {
+      const bookingsOnDay = allBookingsData.filter(b => b.date === dateStr);
+      
+      if (bookingsOnDay.length === 0) {
+        document.getElementById('dayDetails').classList.add('hidden');
+        return;
+      }
+      
+      // 時間順にソート
+      bookingsOnDay.sort((a, b) => a.time.localeCompare(b.time));
+      
+      // 日付を整形
+      const date = new Date(dateStr);
+      const formatted = `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日（${['日', '月', '火', '水', '木', '金', '土'][date.getDay()]}）`;
+      
+      document.getElementById('selectedDate').textContent = formatted;
+      
+      let html = '<div class="space-y-3">';
+      bookingsOnDay.forEach(booking => {
+        html += `
+          <div class="border rounded-lg p-4 hover:bg-gray-50">
+            <div class="flex justify-between items-start mb-3">
+              <div>
+                <div class="font-semibold text-gray-800 mb-1">${booking.name}</div>
+                <div class="text-sm text-gray-600">📞 ${booking.phone}</div>
+              </div>
+              <div class="text-right">
+                <div class="text-lg font-bold text-blue-600">${booking.time}</div>
+                <div class="text-sm text-gray-600">${booking.lessonType}</div>
+              </div>
+            </div>
+            ${booking.message ? `<div class="mt-2 p-2 bg-yellow-50 rounded text-sm">💬 ${booking.message}</div>` : ''}
+          </div>
+        `;
+      });
+      html += '</div>';
+      
+      document.getElementById('dayBookings').innerHTML = html;
+      document.getElementById('dayDetails').classList.remove('hidden');
+      
+      // スクロール
+      document.getElementById('dayDetails').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+
+    // 前月・次月ボタン
+    document.getElementById('prevMonth').addEventListener('click', () => {
+      currentMonth--;
+      if (currentMonth < 0) {
+        currentMonth = 11;
+        currentYear--;
+      }
+      renderCalendar();
+      document.getElementById('dayDetails').classList.add('hidden');
+    });
+
+    document.getElementById('nextMonth').addEventListener('click', () => {
+      currentMonth++;
+      if (currentMonth > 11) {
+        currentMonth = 0;
+        currentYear++;
+      }
+      renderCalendar();
+      document.getElementById('dayDetails').classList.add('hidden');
     });
 
     // ダッシュボード読み込み
