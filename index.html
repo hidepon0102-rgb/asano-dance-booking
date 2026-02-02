@@ -95,57 +95,57 @@
 <body>
   
   <!-- ヘッダー -->
-  <div class="bg-white border-b border-gray-200 py-6">
-    <div class="max-w-5xl mx-auto px-4">
-      <h1 class="text-3xl font-bold text-gray-900">アサノダンススクール</h1>
-      <p class="text-gray-600 mt-1">レッスン予約</p>
+  <div class="bg-white border-b border-gray-200 py-4 md:py-6">
+    <div class="max-w-5xl mx-auto px-3 md:px-4">
+      <h1 class="text-2xl md:text-3xl font-bold text-gray-900">アサノダンススクール</h1>
+      <p class="text-sm md:text-base text-gray-600 mt-1">レッスン予約</p>
     </div>
   </div>
 
   <!-- メインコンテンツ -->
-  <div class="max-w-5xl mx-auto px-4 py-8">
+  <div class="max-w-5xl mx-auto px-3 md:px-4 py-4 md:py-8">
     
     <!-- ステップインジケーター -->
-    <div class="mb-8">
+    <div class="mb-6 md:mb-8">
       <div class="flex items-center justify-between max-w-2xl mx-auto">
         <div id="step1-indicator" class="step-indicator active flex flex-col items-center flex-1">
-          <div class="w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold mb-2">1</div>
-          <span class="text-sm font-medium text-gray-900">レッスン選択</span>
+          <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold mb-1 md:mb-2 text-sm md:text-base">1</div>
+          <span class="text-xs md:text-sm font-medium text-gray-900">レッスン</span>
         </div>
         <div id="step2-indicator" class="step-indicator flex flex-col items-center flex-1">
-          <div class="w-10 h-10 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-bold mb-2">2</div>
-          <span class="text-sm font-medium text-gray-500">日時選択</span>
+          <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-bold mb-1 md:mb-2 text-sm md:text-base">2</div>
+          <span class="text-xs md:text-sm font-medium text-gray-500">日時</span>
         </div>
         <div id="step3-indicator" class="step-indicator flex flex-col items-center flex-1">
-          <div class="w-10 h-10 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-bold mb-2">3</div>
-          <span class="text-sm font-medium text-gray-500">お客様情報</span>
+          <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-bold mb-1 md:mb-2 text-sm md:text-base">3</div>
+          <span class="text-xs md:text-sm font-medium text-gray-500">情報</span>
         </div>
         <div id="step4-indicator" class="step-indicator flex flex-col items-center flex-1">
-          <div class="w-10 h-10 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-bold mb-2">4</div>
-          <span class="text-sm font-medium text-gray-500">確認</span>
+          <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-bold mb-1 md:mb-2 text-sm md:text-base">4</div>
+          <span class="text-xs md:text-sm font-medium text-gray-500">確認</span>
         </div>
       </div>
     </div>
 
     <!-- コンテンツエリア -->
-    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 md:p-8">
       
       <!-- ステップ1: レッスン選択 -->
       <div id="step1" class="step-content fade-in">
-        <h2 class="text-2xl font-bold text-gray-900 mb-6">レッスンタイプを選択してください</h2>
+        <h2 class="text-xl md:text-2xl font-bold text-gray-900 mb-4 md:mb-6">レッスンタイプを選択してください</h2>
         
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
           <label class="lesson-card">
             <input type="radio" name="lessonType" value="無料体験" class="peer hidden">
-            <div class="border-2 border-gray-200 rounded-lg p-6 peer-checked:border-blue-500 peer-checked:bg-blue-50">
-              <div class="flex justify-between items-start mb-3">
+            <div class="border-2 border-gray-200 rounded-lg p-4 md:p-6 peer-checked:border-blue-500 peer-checked:bg-blue-50">
+              <div class="flex justify-between items-start mb-2 md:mb-3">
                 <div>
-                  <h3 class="text-lg font-bold text-gray-900">無料体験レッスン</h3>
-                  <p class="text-sm text-gray-600 mt-1">初めての方におすすめ</p>
+                  <h3 class="text-base md:text-lg font-bold text-gray-900">無料体験レッスン</h3>
+                  <p class="text-xs md:text-sm text-gray-600 mt-1">初めての方におすすめ</p>
                 </div>
-                <div class="text-2xl font-bold text-blue-600">無料</div>
+                <div class="text-xl md:text-2xl font-bold text-blue-600">無料</div>
               </div>
-              <div class="text-sm text-gray-600">
+              <div class="text-xs md:text-sm text-gray-600">
                 <p>⏱ 60分</p>
               </div>
             </div>
@@ -153,15 +153,15 @@
 
           <label class="lesson-card">
             <input type="radio" name="lessonType" value="グループ" class="peer hidden">
-            <div class="border-2 border-gray-200 rounded-lg p-6 peer-checked:border-blue-500 peer-checked:bg-blue-50">
-              <div class="flex justify-between items-start mb-3">
+            <div class="border-2 border-gray-200 rounded-lg p-4 md:p-6 peer-checked:border-blue-500 peer-checked:bg-blue-50">
+              <div class="flex justify-between items-start mb-2 md:mb-3">
                 <div>
-                  <h3 class="text-lg font-bold text-gray-900">グループレッスン</h3>
-                  <p class="text-sm text-gray-600 mt-1">仲間と一緒に楽しく</p>
+                  <h3 class="text-base md:text-lg font-bold text-gray-900">グループレッスン</h3>
+                  <p class="text-xs md:text-sm text-gray-600 mt-1">仲間と一緒に楽しく</p>
                 </div>
-                <div class="text-2xl font-bold text-blue-600">¥3,000</div>
+                <div class="text-xl md:text-2xl font-bold text-blue-600">¥3,000</div>
               </div>
-              <div class="text-sm text-gray-600">
+              <div class="text-xs md:text-sm text-gray-600">
                 <p>⏱ 60分</p>
               </div>
             </div>
@@ -169,15 +169,15 @@
 
           <label class="lesson-card">
             <input type="radio" name="lessonType" value="個人" class="peer hidden">
-            <div class="border-2 border-gray-200 rounded-lg p-6 peer-checked:border-blue-500 peer-checked:bg-blue-50">
-              <div class="flex justify-between items-start mb-3">
+            <div class="border-2 border-gray-200 rounded-lg p-4 md:p-6 peer-checked:border-blue-500 peer-checked:bg-blue-50">
+              <div class="flex justify-between items-start mb-2 md:mb-3">
                 <div>
-                  <h3 class="text-lg font-bold text-gray-900">個人レッスン</h3>
-                  <p class="text-sm text-gray-600 mt-1">マンツーマンで丁寧に</p>
+                  <h3 class="text-base md:text-lg font-bold text-gray-900">個人レッスン</h3>
+                  <p class="text-xs md:text-sm text-gray-600 mt-1">マンツーマンで丁寧に</p>
                 </div>
-                <div class="text-2xl font-bold text-blue-600">¥8,000</div>
+                <div class="text-xl md:text-2xl font-bold text-blue-600">¥8,000</div>
               </div>
-              <div class="text-sm text-gray-600">
+              <div class="text-xs md:text-sm text-gray-600">
                 <p>⏱ 60分</p>
               </div>
             </div>
@@ -185,23 +185,23 @@
 
           <label class="lesson-card">
             <input type="radio" name="lessonType" value="カップル" class="peer hidden">
-            <div class="border-2 border-gray-200 rounded-lg p-6 peer-checked:border-blue-500 peer-checked:bg-blue-50">
-              <div class="flex justify-between items-start mb-3">
+            <div class="border-2 border-gray-200 rounded-lg p-4 md:p-6 peer-checked:border-blue-500 peer-checked:bg-blue-50">
+              <div class="flex justify-between items-start mb-2 md:mb-3">
                 <div>
-                  <h3 class="text-lg font-bold text-gray-900">カップルレッスン</h3>
-                  <p class="text-sm text-gray-600 mt-1">パートナーと一緒に</p>
+                  <h3 class="text-base md:text-lg font-bold text-gray-900">カップルレッスン</h3>
+                  <p class="text-xs md:text-sm text-gray-600 mt-1">パートナーと一緒に</p>
                 </div>
-                <div class="text-2xl font-bold text-blue-600">¥12,000</div>
+                <div class="text-xl md:text-2xl font-bold text-blue-600">¥12,000</div>
               </div>
-              <div class="text-sm text-gray-600">
+              <div class="text-xs md:text-sm text-gray-600">
                 <p>⏱ 60分</p>
               </div>
             </div>
           </label>
         </div>
 
-        <div class="mt-8 flex justify-end">
-          <button onclick="goToStep(2)" class="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-lg font-bold transition">
+        <div class="mt-6 md:mt-8 flex justify-end">
+          <button onclick="goToStep(2)" class="bg-blue-500 hover:bg-blue-600 text-white px-6 md:px-8 py-2.5 md:py-3 rounded-lg font-bold transition text-sm md:text-base">
             次へ →
           </button>
         </div>
@@ -235,11 +235,11 @@
           <div id="timeSlots" class="grid grid-cols-4 md:grid-cols-6 gap-3"></div>
         </div>
 
-        <div class="mt-8 flex justify-between">
-          <button onclick="goToStep(1)" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-8 py-3 rounded-lg font-bold transition">
+        <div class="mt-6 md:mt-8 flex justify-between">
+          <button onclick="goToStep(1)" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-6 md:px-8 py-2.5 md:py-3 rounded-lg font-bold transition text-sm md:text-base">
             ← 戻る
           </button>
-          <button id="step2Next" onclick="goToStep(3)" disabled class="bg-gray-300 text-gray-500 px-8 py-3 rounded-lg font-bold cursor-not-allowed">
+          <button id="step2Next" onclick="goToStep(3)" disabled class="bg-gray-300 text-gray-500 px-6 md:px-8 py-2.5 md:py-3 rounded-lg font-bold cursor-not-allowed text-sm md:text-base">
             次へ →
           </button>
         </div>
@@ -318,11 +318,11 @@
           </div>
         </div>
 
-        <div class="mt-8 flex justify-between">
-          <button onclick="goToStep(2)" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-8 py-3 rounded-lg font-bold transition">
+        <div class="mt-6 md:mt-8 flex justify-between">
+          <button onclick="goToStep(2)" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-6 md:px-8 py-2.5 md:py-3 rounded-lg font-bold transition text-sm md:text-base">
             ← 戻る
           </button>
-          <button onclick="goToStep(4)" class="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-lg font-bold transition">
+          <button onclick="goToStep(4)" class="bg-blue-500 hover:bg-blue-600 text-white px-6 md:px-8 py-2.5 md:py-3 rounded-lg font-bold transition text-sm md:text-base">
             次へ →
           </button>
         </div>
@@ -334,11 +334,11 @@
         
         <div id="confirmationContent" class="bg-gray-50 rounded-lg p-6 space-y-4 mb-8"></div>
 
-        <div class="mt-8 flex justify-between">
-          <button onclick="goToStep(3)" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-8 py-3 rounded-lg font-bold transition">
+        <div class="mt-6 md:mt-8 flex justify-between">
+          <button onclick="goToStep(3)" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-6 md:px-8 py-2.5 md:py-3 rounded-lg font-bold transition text-sm md:text-base">
             ← 戻る
           </button>
-          <button onclick="submitBooking()" class="bg-blue-500 hover:bg-blue-600 text-white px-12 py-3 rounded-lg font-bold transition">
+          <button onclick="submitBooking()" class="bg-blue-500 hover:bg-blue-600 text-white px-8 md:px-12 py-2.5 md:py-3 rounded-lg font-bold transition text-sm md:text-base">
             予約を確定する
           </button>
         </div>
@@ -410,19 +410,19 @@
         const text = indicator.querySelector('span');
         
         if (i < step) {
-          circle.className = 'w-10 h-10 rounded-full bg-green-500 text-white flex items-center justify-center font-bold mb-2';
+          circle.className = 'w-8 h-8 md:w-10 md:h-10 rounded-full bg-green-500 text-white flex items-center justify-center font-bold mb-1 md:mb-2 text-sm md:text-base';
           circle.textContent = '✓';
-          text.className = 'text-sm font-medium text-green-600';
+          text.className = 'text-xs md:text-sm font-medium text-green-600';
           indicator.classList.add('active');
         } else if (i === step) {
-          circle.className = 'w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold mb-2';
+          circle.className = 'w-8 h-8 md:w-10 md:h-10 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold mb-1 md:mb-2 text-sm md:text-base';
           circle.textContent = i;
-          text.className = 'text-sm font-medium text-gray-900';
+          text.className = 'text-xs md:text-sm font-medium text-gray-900';
           indicator.classList.add('active');
         } else {
-          circle.className = 'w-10 h-10 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-bold mb-2';
+          circle.className = 'w-8 h-8 md:w-10 md:h-10 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-bold mb-1 md:mb-2 text-sm md:text-base';
           circle.textContent = i;
-          text.className = 'text-sm font-medium text-gray-500';
+          text.className = 'text-xs md:text-sm font-medium text-gray-500';
           indicator.classList.remove('active');
         }
       }
@@ -578,7 +578,7 @@
       // 次へボタンを有効化
       const btn = document.getElementById('step2Next');
       btn.disabled = false;
-      btn.className = 'bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-lg font-bold transition';
+      btn.className = 'bg-blue-500 hover:bg-blue-600 text-white px-6 md:px-8 py-2.5 md:py-3 rounded-lg font-bold transition text-sm md:text-base';
     };
 
     // 確認画面
