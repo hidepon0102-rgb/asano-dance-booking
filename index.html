@@ -3,104 +3,361 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>アサノダンススクール予約システム</title>
+  <title>レッスン予約 - アサノダンススクール</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      font-family: 'M PLUS Rounded 1c', sans-serif;
+    }
+    
+    body {
+      background: #F8FAFB;
+    }
+    
+    .step-indicator {
+      position: relative;
+    }
+    
+    .step-indicator::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 100%;
+      width: 100%;
+      height: 2px;
+      background: #E5E7EB;
+      transform: translateY(-50%);
+      z-index: -1;
+    }
+    
+    .step-indicator.active::after {
+      background: #3B82F6;
+    }
+    
+    .step-indicator:last-child::after {
+      display: none;
+    }
+    
+    .calendar-cell {
+      aspect-ratio: 1;
+      transition: all 0.2s;
+    }
+    
+    .calendar-cell:hover:not(.disabled):not(.past) {
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+    }
+    
+    .time-slot {
+      transition: all 0.2s;
+    }
+    
+    .time-slot:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .fade-in {
+      animation: fadeIn 0.4s ease-out;
+    }
+    
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .lesson-card {
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    
+    .lesson-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    }
+    
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #3B82F6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+  </style>
 </head>
-<body class="bg-gray-50">
-  <div class="min-h-screen p-4">
-    <div class="max-w-md mx-auto">
-      <div class="text-center pt-6 pb-4">
-        <h1 class="text-2xl font-bold mb-1">レッスン予約</h1>
-        <p class="text-sm text-gray-600">アサノダンススクール</p>
-        <div id="connectionStatus" class="mt-2 text-xs bg-yellow-100 text-yellow-800 py-2 px-4 rounded">
-          🔄 Firebase接続中...
-        </div>
-      </div>
-
-      <div class="bg-white rounded-lg shadow p-6">
-        <h2 class="text-lg font-bold mb-4">予約フォーム</h2>
-        
-        <form id="bookingForm" class="space-y-4">
-          <div>
-            <label class="block text-sm font-semibold mb-2">お名前 *</label>
-            <input type="text" id="name" required class="w-full p-2 border-2 rounded" placeholder="山田 太郎">
-          </div>
-
-          <div>
-            <label class="block text-sm font-semibold mb-2">電話番号 *</label>
-            <input type="tel" id="phone" required class="w-full p-2 border-2 rounded" placeholder="090-1234-5678">
-          </div>
-
-          <div>
-            <label class="block text-sm font-semibold mb-2">メールアドレス</label>
-            <input type="email" id="email" class="w-full p-2 border-2 rounded" placeholder="example@email.com">
-          </div>
-
-          <div>
-            <label class="block text-sm font-semibold mb-2">希望日 *</label>
-            <input type="date" id="date" required class="w-full p-2 border-2 rounded">
-          </div>
-
-          <div>
-            <label class="block text-sm font-semibold mb-2">希望時間 *</label>
-            <select id="time" required class="w-full p-2 border-2 rounded">
-              <option value="">選択してください</option>
-              <option value="10:00">10:00</option>
-              <option value="11:00">11:00</option>
-              <option value="14:00">14:00</option>
-              <option value="15:00">15:00</option>
-              <option value="16:00">16:00</option>
-              <option value="17:00">17:00</option>
-              <option value="18:00">18:00</option>
-              <option value="19:00">19:00</option>
-              <option value="20:00">20:00</option>
-            </select>
-          </div>
-
-          <div>
-            <label class="block text-sm font-semibold mb-2">レッスン種類 *</label>
-            <select id="lessonType" required class="w-full p-2 border-2 rounded">
-              <option value="">選択してください</option>
-              <option value="無料体験">無料体験レッスン</option>
-              <option value="グループ">グループレッスン</option>
-              <option value="個人">個人レッスン</option>
-              <option value="カップル">カップルレッスン</option>
-            </select>
-          </div>
-
-          <div>
-            <label class="block text-sm font-semibold mb-2">ご要望</label>
-            <textarea id="message" rows="3" class="w-full p-2 border-2 rounded resize-none" placeholder="気になることがあればお書きください"></textarea>
-          </div>
-
-          <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded font-semibold hover:bg-blue-700">
-            予約を送信
-          </button>
-        </form>
-
-        <div class="mt-6 pt-6 border-t">
-          <button id="viewBookingsBtn" class="w-full bg-gray-100 text-gray-700 py-2 rounded hover:bg-gray-200">
-            予約一覧を表示
-          </button>
-        </div>
-      </div>
-
-      <div id="bookingsList" class="mt-4 hidden">
-        <div class="bg-white rounded-lg shadow p-6">
-          <h2 class="text-lg font-bold mb-4">予約一覧</h2>
-          <div id="bookingsContent"></div>
-          <button id="hideBookingsBtn" class="mt-4 w-full bg-gray-100 py-2 rounded">閉じる</button>
-        </div>
-      </div>
+<body>
+  
+  <!-- ヘッダー -->
+  <div class="bg-white border-b border-gray-200 py-6">
+    <div class="max-w-5xl mx-auto px-4">
+      <h1 class="text-3xl font-bold text-gray-900">アサノダンススクール</h1>
+      <p class="text-gray-600 mt-1">レッスン予約</p>
     </div>
   </div>
 
-  <script type="module">
-    // Firebase SDKのインポート
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-    import { getFirestore, collection, addDoc, getDocs, query, orderBy } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+  <!-- メインコンテンツ -->
+  <div class="max-w-5xl mx-auto px-4 py-8">
+    
+    <!-- ステップインジケーター -->
+    <div class="mb-8">
+      <div class="flex items-center justify-between max-w-2xl mx-auto">
+        <div id="step1-indicator" class="step-indicator active flex flex-col items-center flex-1">
+          <div class="w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold mb-2">1</div>
+          <span class="text-sm font-medium text-gray-900">レッスン選択</span>
+        </div>
+        <div id="step2-indicator" class="step-indicator flex flex-col items-center flex-1">
+          <div class="w-10 h-10 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-bold mb-2">2</div>
+          <span class="text-sm font-medium text-gray-500">日時選択</span>
+        </div>
+        <div id="step3-indicator" class="step-indicator flex flex-col items-center flex-1">
+          <div class="w-10 h-10 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-bold mb-2">3</div>
+          <span class="text-sm font-medium text-gray-500">お客様情報</span>
+        </div>
+        <div id="step4-indicator" class="step-indicator flex flex-col items-center flex-1">
+          <div class="w-10 h-10 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-bold mb-2">4</div>
+          <span class="text-sm font-medium text-gray-500">確認</span>
+        </div>
+      </div>
+    </div>
 
-    // Firebase設定
+    <!-- コンテンツエリア -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
+      
+      <!-- ステップ1: レッスン選択 -->
+      <div id="step1" class="step-content fade-in">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6">レッスンタイプを選択してください</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <label class="lesson-card">
+            <input type="radio" name="lessonType" value="無料体験" class="peer hidden">
+            <div class="border-2 border-gray-200 rounded-lg p-6 peer-checked:border-blue-500 peer-checked:bg-blue-50">
+              <div class="flex justify-between items-start mb-3">
+                <div>
+                  <h3 class="text-lg font-bold text-gray-900">無料体験レッスン</h3>
+                  <p class="text-sm text-gray-600 mt-1">初めての方におすすめ</p>
+                </div>
+                <div class="text-2xl font-bold text-blue-600">無料</div>
+              </div>
+              <div class="text-sm text-gray-600">
+                <p>⏱ 60分</p>
+              </div>
+            </div>
+          </label>
+
+          <label class="lesson-card">
+            <input type="radio" name="lessonType" value="グループ" class="peer hidden">
+            <div class="border-2 border-gray-200 rounded-lg p-6 peer-checked:border-blue-500 peer-checked:bg-blue-50">
+              <div class="flex justify-between items-start mb-3">
+                <div>
+                  <h3 class="text-lg font-bold text-gray-900">グループレッスン</h3>
+                  <p class="text-sm text-gray-600 mt-1">仲間と一緒に楽しく</p>
+                </div>
+                <div class="text-2xl font-bold text-blue-600">¥3,000</div>
+              </div>
+              <div class="text-sm text-gray-600">
+                <p>⏱ 60分</p>
+              </div>
+            </div>
+          </label>
+
+          <label class="lesson-card">
+            <input type="radio" name="lessonType" value="個人" class="peer hidden">
+            <div class="border-2 border-gray-200 rounded-lg p-6 peer-checked:border-blue-500 peer-checked:bg-blue-50">
+              <div class="flex justify-between items-start mb-3">
+                <div>
+                  <h3 class="text-lg font-bold text-gray-900">個人レッスン</h3>
+                  <p class="text-sm text-gray-600 mt-1">マンツーマンで丁寧に</p>
+                </div>
+                <div class="text-2xl font-bold text-blue-600">¥8,000</div>
+              </div>
+              <div class="text-sm text-gray-600">
+                <p>⏱ 60分</p>
+              </div>
+            </div>
+          </label>
+
+          <label class="lesson-card">
+            <input type="radio" name="lessonType" value="カップル" class="peer hidden">
+            <div class="border-2 border-gray-200 rounded-lg p-6 peer-checked:border-blue-500 peer-checked:bg-blue-50">
+              <div class="flex justify-between items-start mb-3">
+                <div>
+                  <h3 class="text-lg font-bold text-gray-900">カップルレッスン</h3>
+                  <p class="text-sm text-gray-600 mt-1">パートナーと一緒に</p>
+                </div>
+                <div class="text-2xl font-bold text-blue-600">¥12,000</div>
+              </div>
+              <div class="text-sm text-gray-600">
+                <p>⏱ 60分</p>
+              </div>
+            </div>
+          </label>
+        </div>
+
+        <div class="mt-8 flex justify-end">
+          <button onclick="goToStep(2)" class="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-lg font-bold transition">
+            次へ →
+          </button>
+        </div>
+      </div>
+
+      <!-- ステップ2: 日時選択 -->
+      <div id="step2" class="step-content hidden">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6">日時を選択してください</h2>
+        
+        <!-- カレンダーコントロール -->
+        <div class="flex justify-between items-center mb-6">
+          <button onclick="prevMonth()" class="p-2 hover:bg-gray-100 rounded-lg transition">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+          </button>
+          <h3 id="calendarTitle" class="text-xl font-bold text-gray-900"></h3>
+          <button onclick="nextMonth()" class="p-2 hover:bg-gray-100 rounded-lg transition">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- カレンダーグリッド -->
+        <div id="calendarGrid" class="mb-8"></div>
+
+        <!-- 時間選択 -->
+        <div id="timeSelection" class="hidden">
+          <h3 class="text-lg font-bold text-gray-900 mb-4">時間を選択してください</h3>
+          <div id="timeSlots" class="grid grid-cols-4 md:grid-cols-6 gap-3"></div>
+        </div>
+
+        <div class="mt-8 flex justify-between">
+          <button onclick="goToStep(1)" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-8 py-3 rounded-lg font-bold transition">
+            ← 戻る
+          </button>
+          <button id="step2Next" onclick="goToStep(3)" disabled class="bg-gray-300 text-gray-500 px-8 py-3 rounded-lg font-bold cursor-not-allowed">
+            次へ →
+          </button>
+        </div>
+      </div>
+
+      <!-- ステップ3: お客様情報 -->
+      <div id="step3" class="step-content hidden">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6">お客様情報を入力してください</h2>
+        
+        <div class="space-y-6">
+          <div>
+            <label class="block text-sm font-bold text-gray-700 mb-2">お名前 <span class="text-red-500">*</span></label>
+            <input type="text" id="name" required class="w-full px-4 py-3 border border-gray-300 rounded-lg" placeholder="山田 太郎">
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-bold text-gray-700 mb-2">電話番号 <span class="text-red-500">*</span></label>
+              <input type="tel" id="phone" required class="w-full px-4 py-3 border border-gray-300 rounded-lg" placeholder="090-1234-5678">
+            </div>
+            <div>
+              <label class="block text-sm font-bold text-gray-700 mb-2">メールアドレス</label>
+              <input type="email" id="email" class="w-full px-4 py-3 border border-gray-300 rounded-lg" placeholder="example@email.com">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-bold text-gray-700 mb-3">ダンス経験 <span class="text-red-500">*</span></label>
+            <div class="grid grid-cols-3 gap-3">
+              <label class="cursor-pointer">
+                <input type="radio" name="experience" value="未経験" required class="peer hidden">
+                <div class="border-2 border-gray-200 rounded-lg p-4 text-center peer-checked:border-blue-500 peer-checked:bg-blue-50 transition">
+                  <div class="font-bold">未経験</div>
+                </div>
+              </label>
+              <label class="cursor-pointer">
+                <input type="radio" name="experience" value="経験あり" class="peer hidden">
+                <div class="border-2 border-gray-200 rounded-lg p-4 text-center peer-checked:border-blue-500 peer-checked:bg-blue-50 transition">
+                  <div class="font-bold">経験あり</div>
+                </div>
+              </label>
+              <label class="cursor-pointer">
+                <input type="radio" name="experience" value="上級" class="peer hidden">
+                <div class="border-2 border-gray-200 rounded-lg p-4 text-center peer-checked:border-blue-500 peer-checked:bg-blue-50 transition">
+                  <div class="font-bold">上級</div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-bold text-gray-700 mb-3">お支払い方法 <span class="text-red-500">*</span></label>
+            <div class="grid grid-cols-2 gap-4">
+              <label class="cursor-pointer">
+                <input type="radio" name="payment" value="カード決済" required class="peer hidden">
+                <div class="border-2 border-gray-200 rounded-lg p-4 text-center peer-checked:border-blue-500 peer-checked:bg-blue-50 transition">
+                  <div class="text-3xl mb-2">💳</div>
+                  <div class="font-bold">カード決済</div>
+                  <div class="text-xs text-gray-600 mt-1">事前決済</div>
+                </div>
+              </label>
+              <label class="cursor-pointer">
+                <input type="radio" name="payment" value="現地決済" class="peer hidden">
+                <div class="border-2 border-gray-200 rounded-lg p-4 text-center peer-checked:border-blue-500 peer-checked:bg-blue-50 transition">
+                  <div class="text-3xl mb-2">🏢</div>
+                  <div class="font-bold">現地決済</div>
+                  <div class="text-xs text-gray-600 mt-1">スタジオ払い</div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-bold text-gray-700 mb-2">ご要望・ご質問</label>
+            <textarea id="message" rows="4" class="w-full px-4 py-3 border border-gray-300 rounded-lg resize-none" placeholder="気になることがあればお気軽にお書きください"></textarea>
+          </div>
+        </div>
+
+        <div class="mt-8 flex justify-between">
+          <button onclick="goToStep(2)" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-8 py-3 rounded-lg font-bold transition">
+            ← 戻る
+          </button>
+          <button onclick="goToStep(4)" class="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-lg font-bold transition">
+            次へ →
+          </button>
+        </div>
+      </div>
+
+      <!-- ステップ4: 確認 -->
+      <div id="step4" class="step-content hidden">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6">予約内容の確認</h2>
+        
+        <div id="confirmationContent" class="bg-gray-50 rounded-lg p-6 space-y-4 mb-8"></div>
+
+        <div class="mt-8 flex justify-between">
+          <button onclick="goToStep(3)" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-8 py-3 rounded-lg font-bold transition">
+            ← 戻る
+          </button>
+          <button onclick="submitBooking()" class="bg-blue-500 hover:bg-blue-600 text-white px-12 py-3 rounded-lg font-bold transition">
+            予約を確定する
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- フッター -->
+    <div class="text-center mt-8">
+      <a href="admin-login.html" class="text-sm text-gray-500 hover:text-blue-600 transition">管理者の方はこちら</a>
+    </div>
+
+  </div>
+
+  <script type="module">
+    // Firebase
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getFirestore, collection, addDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
     const firebaseConfig = {
       apiKey: "AIzaSyDbcAHRmhBGfUoqpf-LzgyrPdSRmGeJtDU",
       authDomain: "asano-dance-school-8b670.firebaseapp.com",
@@ -110,112 +367,297 @@
       appId: "1:167959563019:web:840229f09cbcf86ae3300e"
     };
 
-    // Firebaseの初期化
-    let app, db;
-    try {
-      app = initializeApp(firebaseConfig);
-      db = getFirestore(app);
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // 変数
+    let currentStep = 1;
+    let bookingData = {};
+    let currentDate = new Date();
+    let selectedDate = null;
+    let selectedTime = null;
+
+    // ステップ管理
+    window.goToStep = function(step) {
+      // バリデーション
+      if (step === 2 && !validateStep1()) return;
+      if (step === 3 && !validateStep2()) return;
+      if (step === 4 && !validateStep3()) return;
+
+      // データ保存
+      if (step === 2) saveStep1();
+      if (step === 3) saveStep2();
+      if (step === 4) saveStep3();
+
+      // UI更新
+      document.getElementById(`step${currentStep}`).classList.add('hidden');
+      document.getElementById(`step${step}`).classList.remove('hidden');
+      document.getElementById(`step${step}`).classList.add('fade-in');
+
+      updateStepIndicators(step);
+
+      if (step === 2 && currentStep === 1) renderCalendar();
+      if (step === 4) showConfirmation();
+
+      currentStep = step;
+      window.scrollTo(0, 0);
+    };
+
+    function updateStepIndicators(step) {
+      for (let i = 1; i <= 4; i++) {
+        const indicator = document.getElementById(`step${i}-indicator`);
+        const circle = indicator.querySelector('div');
+        const text = indicator.querySelector('span');
+        
+        if (i < step) {
+          circle.className = 'w-10 h-10 rounded-full bg-green-500 text-white flex items-center justify-center font-bold mb-2';
+          circle.textContent = '✓';
+          text.className = 'text-sm font-medium text-green-600';
+          indicator.classList.add('active');
+        } else if (i === step) {
+          circle.className = 'w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold mb-2';
+          circle.textContent = i;
+          text.className = 'text-sm font-medium text-gray-900';
+          indicator.classList.add('active');
+        } else {
+          circle.className = 'w-10 h-10 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-bold mb-2';
+          circle.textContent = i;
+          text.className = 'text-sm font-medium text-gray-500';
+          indicator.classList.remove('active');
+        }
+      }
+    }
+
+    // バリデーション
+    function validateStep1() {
+      const lesson = document.querySelector('input[name="lessonType"]:checked');
+      if (!lesson) {
+        alert('レッスンタイプを選択してください');
+        return false;
+      }
+      return true;
+    }
+
+    function validateStep2() {
+      if (!selectedDate || !selectedTime) {
+        alert('日時を選択してください');
+        return false;
+      }
+      return true;
+    }
+
+    function validateStep3() {
+      const name = document.getElementById('name').value;
+      const phone = document.getElementById('phone').value;
+      const experience = document.querySelector('input[name="experience"]:checked');
+      const payment = document.querySelector('input[name="payment"]:checked');
+
+      if (!name || !phone || !experience || !payment) {
+        alert('必須項目を入力してください');
+        return false;
+      }
+      return true;
+    }
+
+    // データ保存
+    function saveStep1() {
+      bookingData.lessonType = document.querySelector('input[name="lessonType"]:checked').value;
+    }
+
+    function saveStep2() {
+      bookingData.date = selectedDate;
+      bookingData.time = selectedTime;
+    }
+
+    function saveStep3() {
+      bookingData.name = document.getElementById('name').value;
+      bookingData.phone = document.getElementById('phone').value;
+      bookingData.email = document.getElementById('email').value || '';
+      bookingData.experience = document.querySelector('input[name="experience"]:checked').value;
+      bookingData.payment = document.querySelector('input[name="payment"]:checked').value;
+      bookingData.message = document.getElementById('message').value || '';
+    }
+
+    // カレンダー
+    window.prevMonth = function() {
+      currentDate.setMonth(currentDate.getMonth() - 1);
+      renderCalendar();
+    };
+
+    window.nextMonth = function() {
+      currentDate.setMonth(currentDate.getMonth() + 1);
+      renderCalendar();
+    };
+
+    function renderCalendar() {
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
       
-      // 接続成功表示
-      document.getElementById('connectionStatus').className = 'mt-2 text-xs bg-green-100 text-green-800 py-2 px-4 rounded';
-      document.getElementById('connectionStatus').textContent = '🔥 Firebase接続済み - データはクラウドに保存されます';
+      document.getElementById('calendarTitle').textContent = `${year}年${month + 1}月`;
       
-      console.log('✅ Firebase接続成功！');
-    } catch (error) {
-      console.error('Firebase初期化エラー:', error);
-      document.getElementById('connectionStatus').className = 'mt-2 text-xs bg-red-100 text-red-800 py-2 px-4 rounded';
-      document.getElementById('connectionStatus').textContent = '❌ Firebase接続エラー';
+      const firstDay = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      
+      let html = '<div class="grid grid-cols-7 gap-2">';
+      
+      // 曜日ヘッダー
+      const dayNames = ['日', '月', '火', '水', '木', '金', '土'];
+      dayNames.forEach((day, i) => {
+        const color = i === 0 ? 'text-red-600' : i === 6 ? 'text-blue-600' : 'text-gray-600';
+        html += `<div class="text-center font-bold ${color} py-2 text-sm">${day}</div>`;
+      });
+      
+      // 空白セル
+      for (let i = 0; i < firstDay; i++) {
+        html += '<div></div>';
+      }
+      
+      // 日付セル
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      for (let day = 1; day <= daysInMonth; day++) {
+        const date = new Date(year, month, day);
+        const dateStr = date.toISOString().split('T')[0];
+        const isPast = date < today;
+        const isSelected = selectedDate === dateStr;
+        const dayOfWeek = date.getDay();
+        
+        let classes = 'calendar-cell flex items-center justify-center border-2 rounded-lg font-bold cursor-pointer ';
+        
+        if (isPast) {
+          classes += 'bg-gray-50 border-gray-200 text-gray-400 cursor-not-allowed past';
+        } else if (isSelected) {
+          classes += 'bg-blue-500 border-blue-500 text-white';
+        } else {
+          classes += 'bg-white border-gray-200 hover:border-blue-400 text-gray-900';
+        }
+        
+        const onclick = isPast ? '' : `onclick="selectDate('${dateStr}')"`;
+        
+        html += `<div ${onclick} class="${classes}">${day}</div>`;
+      }
+      
+      html += '</div>';
+      document.getElementById('calendarGrid').innerHTML = html;
+    }
+
+    window.selectDate = function(dateStr) {
+      selectedDate = dateStr;
+      selectedTime = null;
+      renderCalendar();
+      showTimeSlots();
+    };
+
+    function showTimeSlots() {
+      const times = ['10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00'];
+      
+      let html = '';
+      times.forEach(time => {
+        const selected = selectedTime === time;
+        const classes = selected 
+          ? 'time-slot bg-blue-500 text-white border-2 border-blue-500 px-4 py-3 rounded-lg font-bold'
+          : 'time-slot bg-white text-gray-900 border-2 border-gray-200 hover:border-blue-400 px-4 py-3 rounded-lg font-bold';
+        
+        html += `<button type="button" onclick="selectTime('${time}')" class="${classes}">${time}</button>`;
+      });
+      
+      document.getElementById('timeSlots').innerHTML = html;
+      document.getElementById('timeSelection').classList.remove('hidden');
+      
+      // スクロール
+      setTimeout(() => {
+        document.getElementById('timeSelection').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 100);
+    }
+
+    window.selectTime = function(time) {
+      selectedTime = time;
+      showTimeSlots();
+      
+      // 次へボタンを有効化
+      const btn = document.getElementById('step2Next');
+      btn.disabled = false;
+      btn.className = 'bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-lg font-bold transition';
+    };
+
+    // 確認画面
+    function showConfirmation() {
+      const priceMap = {
+        '無料体験': '無料',
+        'グループ': '¥3,000',
+        '個人': '¥8,000',
+        'カップル': '¥12,000'
+      };
+
+      const html = `
+        <div class="space-y-3">
+          <div class="flex justify-between py-3 border-b">
+            <span class="text-gray-600">レッスン</span>
+            <span class="font-bold text-gray-900">${bookingData.lessonType}</span>
+          </div>
+          <div class="flex justify-between py-3 border-b">
+            <span class="text-gray-600">料金</span>
+            <span class="font-bold text-blue-600 text-xl">${priceMap[bookingData.lessonType]}</span>
+          </div>
+          <div class="flex justify-between py-3 border-b">
+            <span class="text-gray-600">日時</span>
+            <span class="font-bold text-gray-900">${bookingData.date} ${bookingData.time}</span>
+          </div>
+          <div class="flex justify-between py-3 border-b">
+            <span class="text-gray-600">お名前</span>
+            <span class="font-bold text-gray-900">${bookingData.name}</span>
+          </div>
+          <div class="flex justify-between py-3 border-b">
+            <span class="text-gray-600">電話番号</span>
+            <span class="font-bold text-gray-900">${bookingData.phone}</span>
+          </div>
+          ${bookingData.email ? `
+          <div class="flex justify-between py-3 border-b">
+            <span class="text-gray-600">メール</span>
+            <span class="font-bold text-gray-900">${bookingData.email}</span>
+          </div>
+          ` : ''}
+          <div class="flex justify-between py-3 border-b">
+            <span class="text-gray-600">ダンス経験</span>
+            <span class="font-bold text-gray-900">${bookingData.experience}</span>
+          </div>
+          <div class="flex justify-between py-3 border-b">
+            <span class="text-gray-600">お支払い方法</span>
+            <span class="font-bold text-gray-900">${bookingData.payment}</span>
+          </div>
+          ${bookingData.message ? `
+          <div class="py-3">
+            <div class="text-gray-600 mb-2">ご要望</div>
+            <div class="bg-white p-4 rounded-lg border border-gray-200 text-gray-900">${bookingData.message}</div>
+          </div>
+          ` : ''}
+        </div>
+      `;
+
+      document.getElementById('confirmationContent').innerHTML = html;
     }
 
     // 予約送信
-    document.getElementById('bookingForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      
-      const submitBtn = e.target.querySelector('button[type="submit"]');
-      submitBtn.disabled = true;
-      submitBtn.textContent = '送信中...';
-      
-      const bookingData = {
-        name: document.getElementById('name').value,
-        phone: document.getElementById('phone').value,
-        email: document.getElementById('email').value || '',
-        date: document.getElementById('date').value,
-        time: document.getElementById('time').value,
-        lessonType: document.getElementById('lessonType').value,
-        message: document.getElementById('message').value || '',
-        createdAt: new Date().toISOString(),
-        status: 'confirmed'
-      };
-
+    window.submitBooking = async function() {
       try {
-        const docRef = await addDoc(collection(db, 'bookings'), bookingData);
-        console.log('予約ID:', docRef.id);
+        const data = {
+          ...bookingData,
+          createdAt: new Date().toISOString(),
+          status: 'confirmed'
+        };
+
+        await addDoc(collection(db, 'bookings'), data);
         
-        alert('✅ 予約が完了しました！\n\nFirebaseに保存されました。');
-        document.getElementById('bookingForm').reset();
+        alert('🎉 予約が完了しました！\n\n確認のご連絡を差し上げますので、少々お待ちください。');
+        location.reload();
+        
       } catch (error) {
         console.error('予約エラー:', error);
-        alert('❌ 予約の送信に失敗しました。\n\nエラー: ' + error.message);
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = '予約を送信';
+        alert('❌ 予約の送信に失敗しました。\n\nお手数ですが、お電話にてご予約ください。');
       }
-    });
-
-    // 予約一覧表示
-    document.getElementById('viewBookingsBtn').addEventListener('click', async () => {
-      try {
-        const bookingsQuery = query(collection(db, 'bookings'));
-        const querySnapshot = await getDocs(bookingsQuery);
-        
-        let html = '';
-        if (querySnapshot.empty) {
-          html = '<p class="text-gray-500 text-center py-4">予約がありません</p>';
-        } else {
-          const bookings = [];
-          querySnapshot.forEach((doc) => {
-            bookings.push({ id: doc.id, ...doc.data() });
-          });
-          
-          // 日付順にソート
-          bookings.sort((a, b) => {
-            const dateA = new Date(a.date + ' ' + a.time);
-            const dateB = new Date(b.date + ' ' + b.time);
-            return dateA - dateB;
-          });
-          
-          bookings.forEach((booking) => {
-            html += `
-              <div class="border rounded p-4 mb-3">
-                <div class="font-bold">${booking.name}</div>
-                <div class="text-sm text-gray-600 mt-2 space-y-1">
-                  <div>📅 ${booking.date} ${booking.time}</div>
-                  <div>📚 ${booking.lessonType}</div>
-                  <div>📞 ${booking.phone}</div>
-                  ${booking.email ? `<div>📧 ${booking.email}</div>` : ''}
-                  ${booking.message ? `<div class="mt-2 p-2 bg-yellow-50 rounded">💬 ${booking.message}</div>` : ''}
-                </div>
-              </div>
-            `;
-          });
-        }
-        
-        document.getElementById('bookingsContent').innerHTML = html;
-        document.getElementById('bookingsList').classList.remove('hidden');
-      } catch (error) {
-        console.error('予約取得エラー:', error);
-        alert('❌ 予約の取得に失敗しました。\n\nエラー: ' + error.message);
-      }
-    });
-
-    // 一覧を閉じる
-    document.getElementById('hideBookingsBtn').addEventListener('click', () => {
-      document.getElementById('bookingsList').classList.add('hidden');
-    });
-
-    // 日付の最小値を今日に設定
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById('date').setAttribute('min', today);
+    };
   </script>
+
 </body>
 </html>
