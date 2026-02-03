@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>管理画面 - アサノダンススクール</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      font-family: 'M PLUS Rounded 1c', sans-serif;
+    }
+    body {
+      background: #F8FAFB;
+    }
+    .stat-card {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    .stat-card-blue {
+      background: linear-gradient(135deg, #4A90E2 0%, #63B3ED 100%);
+    }
+    .stat-card-green {
+      background: linear-gradient(135deg, #10B981 0%, #34D399 100%);
+    }
+    .stat-card-orange {
+      background: linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%);
+    }
+  </style>
+</head>
+<body>
+  <!-- サイドバー -->
+  <div class="flex h-screen">
+    <div class="w-64 bg-white border-r border-gray-200 hidden md:block">
+      <div class="p-6">
+        <h1 class="text-2xl font-bold text-gray-900">アサノダンス</h1>
+        <p class="text-sm text-gray-500">管理画面</p>
+      </div>
+      
+      <nav class="px-4 space-y-1">
+        <button class="nav-btn active w-full text-left px-4 py-3 rounded-lg font-medium text-sm flex items-center space-x-3" data-section="dashboard">
+          <span>📊</span>
+          <span>ダッシュボード</span>
+        </button>
+        <button class="nav-btn w-full text-left px-4 py-3 rounded-lg font-medium text-sm flex items-center space-x-3" data-section="calendar">
+          <span>📅</span>
+          <span>カレンダー</span>
+        </button>
+        <button class="nav-btn w-full text-left px-4 py-3 rounded-lg font-medium text-sm flex items-center space-x-3" data-section="bookings">
+          <span>📋</span>
+          <span>予約管理</span>
+        </button>
+        <button class="nav-btn w-full text-left px-4 py-3 rounded-lg font-medium text-sm flex items-center space-x-3" data-section="staff">
+          <span>👥</span>
+          <span>スタッフ管理</span>
+        </button>
+        <button class="nav-btn w-full text-left px-4 py-3 rounded-lg font-medium text-sm flex items-center space-x-3" data-section="schedule">
+          <span>🗓️</span>
+          <span>スケジュール</span>
+        </button>
+      </nav>
+
+      <div class="absolute bottom-0 w-64 p-4 border-t border-gray-200">
+        <div class="flex items-center justify-between">
+          <div class="text-sm">
+            <p class="font-medium text-gray-900" id="userEmail"></p>
+          </div>
+          <button id="logoutBtn" class="text-red-600 hover:text-red-800">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- メインコンテンツ -->
+    <div class="flex-1 overflow-y-auto">
+      <!-- トップバー -->
+      <header class="bg-white border-b border-gray-200 sticky top-0 z-10">
+        <div class="px-6 py-4 flex justify-between items-center">
+          <h2 class="text-2xl font-bold text-gray-900" id="pageTitle">ダッシュボード</h2>
+          <div class="flex items-center space-x-4">
+            <span class="text-sm text-gray-600" id="currentDate"></span>
+          </div>
+        </div>
+      </header>
+
+      <div class="p-6">
+
+    <!-- ダッシュボード -->
+    <div id="dashboardSection" class="section">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <!-- 統計カード -->
+        <div class="stat-card-blue rounded-xl p-6 text-white shadow-lg">
+          <div class="flex items-center justify-between mb-4">
+            <div class="text-sm font-medium opacity-90">今日の予約</div>
+            <div class="bg-white bg-opacity-20 rounded-lg p-2">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+              </svg>
+            </div>
+          </div>
+          <div class="text-4xl font-bold" id="todayBookings">0</div>
+          <div class="text-sm opacity-80 mt-2">件</div>
+        </div>
+        
+        <div class="stat-card-green rounded-xl p-6 text-white shadow-lg">
+          <div class="flex items-center justify-between mb-4">
+            <div class="text-sm font-medium opacity-90">今週の予約</div>
+            <div class="bg-white bg-opacity-20 rounded-lg p-2">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+              </svg>
+            </div>
+          </div>
+          <div class="text-4xl font-bold" id="weekBookings">0</div>
+          <div class="text-sm opacity-80 mt-2">件</div>
+        </div>
+        
+        <div class="stat-card-orange rounded-xl p-6 text-white shadow-lg">
+          <div class="flex items-center justify-between mb-4">
+            <div class="text-sm font-medium opacity-90">総予約数</div>
+            <div class="bg-white bg-opacity-20 rounded-lg p-2">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+              </svg>
+            </div>
+          </div>
+          <div class="text-4xl font-bold" id="totalBookings">0</div>
+          <div class="text-sm opacity-80 mt-2">件</div>
+        </div>
+      </div>
+
+      <!-- 最近の予約 -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+        <div class="p-6 border-b border-gray-200">
+          <h2 class="text-lg font-bold text-gray-900">最近の予約</h2>
+        </div>
+        <div id="recentBookings" class="p-6">
+          <p class="text-gray-500 text-center py-8">読み込み中...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- カレンダー -->
+    <div id="calendarSection" class="section hidden">
+      <div class="bg-white rounded-lg shadow">
+        <div class="p-6 border-b flex justify-between items-center">
+          <button id="prevMonth" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium">
+            ← 前月
+          </button>
+          <h2 class="text-lg font-bold" id="currentMonth"></h2>
+          <button id="nextMonth" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium">
+            次月 →
+          </button>
+        </div>
+        <div class="p-6">
+          <div id="calendarGrid" class="grid grid-cols-7 gap-2">
+            <!-- カレンダーがここに表示されます -->
+          </div>
+        </div>
+      </div>
+
+      <!-- 選択した日の予約詳細 -->
+      <div id="dayDetails" class="mt-6 bg-white rounded-lg shadow hidden">
+        <div class="p-6 border-b">
+          <h3 class="text-lg font-bold" id="selectedDate"></h3>
+        </div>
+        <div id="dayBookings" class="p-6">
+          <!-- 予約詳細がここに表示されます -->
+        </div>
+      </div>
+    </div>
+
+    <!-- 予約管理 -->
+    <div id="bookingsSection" class="section hidden">
+      <div class="bg-white rounded-lg shadow">
+        <div class="p-6 border-b">
+          <h2 class="text-lg font-bold">予約一覧</h2>
+        </div>
+        <div id="allBookings" class="p-6">
+          <p class="text-gray-500 text-center py-8">読み込み中...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- スタッフ管理 -->
+    <div id="staffSection" class="section hidden">
+      <div class="bg-white rounded-lg shadow mb-6">
+        <div class="p-6 border-b flex justify-between items-center">
+          <h2 class="text-lg font-bold">スタッフ管理</h2>
+          <button id="addStaffBtn" class="bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700">
+            + 新規追加
+          </button>
+        </div>
+        <div class="p-6">
+          <div id="staffListManagement" class="space-y-4">
+            <!-- スタッフリストがここに表示されます -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- スタッフ追加/編集モーダル -->
+    <div id="staffModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div class="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div class="p-6 border-b flex justify-between items-center">
+          <h3 class="text-xl font-bold" id="modalTitle">スタッフ追加</h3>
+          <button onclick="closeStaffModal()" class="text-gray-500 hover:text-gray-700">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+        
+        <form id="staffForm" class="p-6 space-y-6">
+          <input type="hidden" id="staffId">
+          
+          <!-- 基本情報 -->
+          <div>
+            <label class="block text-sm font-bold text-gray-700 mb-2">名前 *</label>
+            <input type="text" id="staffName" required class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+          </div>
+
+          <!-- 写真URL -->
+          <div>
+            <label class="block text-sm font-bold text-gray-700 mb-2">プロフィール写真URL</label>
+            <input type="url" id="staffPhoto" class="w-full px-4 py-2 border border-gray-300 rounded-lg" placeholder="https://example.com/photo.jpg">
+            <p class="text-xs text-gray-500 mt-1">写真のURLを入力してください（オプション）</p>
+          </div>
+
+          <!-- 担当種目 -->
+          <div>
+            <label class="block text-sm font-bold text-gray-700 mb-2">担当種目 *</label>
+            <div class="space-y-2">
+              <label class="flex items-center">
+                <input type="checkbox" value="スタンダード" class="specialty-checkbox mr-2">
+                <span>スタンダード</span>
+              </label>
+              <label class="flex items-center">
+                <input type="checkbox" value="ラテンアメリカン" class="specialty-checkbox mr-2">
+                <span>ラテンアメリカン</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- 勤務スケジュール -->
+          <div>
+            <label class="block text-sm font-bold text-gray-700 mb-3">勤務スケジュール</label>
+            <div class="space-y-3">
+              <div class="grid grid-cols-3 gap-3 items-center">
+                <label class="flex items-center">
+                  <input type="checkbox" id="monday" class="day-checkbox mr-2">
+                  <span>月曜日</span>
+                </label>
+                <input type="time" id="mondayStart" class="px-2 py-1 border border-gray-300 rounded">
+                <input type="time" id="mondayEnd" class="px-2 py-1 border border-gray-300 rounded">
+              </div>
+              
+              <div class="grid grid-cols-3 gap-3 items-center">
+                <label class="flex items-center">
+                  <input type="checkbox" id="tuesday" class="day-checkbox mr-2">
+                  <span>火曜日</span>
+                </label>
+                <input type="time" id="tuesdayStart" class="px-2 py-1 border border-gray-300 rounded">
+                <input type="time" id="tuesdayEnd" class="px-2 py-1 border border-gray-300 rounded">
+              </div>
+              
+              <div class="grid grid-cols-3 gap-3 items-center">
+                <label class="flex items-center">
+                  <input type="checkbox" id="wednesday" class="day-checkbox mr-2">
+                  <span>水曜日</span>
+                </label>
+                <input type="time" id="wednesdayStart" class="px-2 py-1 border border-gray-300 rounded">
+                <input type="time" id="wednesdayEnd" class="px-2 py-1 border border-gray-300 rounded">
+              </div>
+              
+              <div class="grid grid-cols-3 gap-3 items-center">
+                <label class="flex items-center">
+                  <input type="checkbox" id="thursday" class="day-checkbox mr-2">
+                  <span>木曜日</span>
+                </label>
+                <input type="time" id="thursdayStart" class="px-2 py-1 border border-gray-300 rounded">
+                <input type="time" id="thursdayEnd" class="px-2 py-1 border border-gray-300 rounded">
+              </div>
+              
+              <div class="grid grid-cols-3 gap-3 items-center">
+                <label class="flex items-center">
+                  <input type="checkbox" id="friday" class="day-checkbox mr-2">
+                  <span>金曜日</span>
+                </label>
+                <input type="time" id="fridayStart" class="px-2 py-1 border border-gray-300 rounded">
+                <input type="time" id="fridayEnd" class="px-2 py-1 border border-gray-300 rounded">
+              </div>
+              
+              <div class="grid grid-cols-3 gap-3 items-center">
+                <label class="flex items-center">
+                  <input type="checkbox" id="saturday" class="day-checkbox mr-2">
+                  <span>土曜日</span>
+                </label>
+                <input type="time" id="saturdayStart" class="px-2 py-1 border border-gray-300 rounded">
+                <input type="time" id="saturdayEnd" class="px-2 py-1 border border-gray-300 rounded">
+              </div>
+              
+              <div class="grid grid-cols-3 gap-3 items-center">
+                <label class="flex items-center">
+                  <input type="checkbox" id="sunday" class="day-checkbox mr-2">
+                  <span>日曜日</span>
+                </label>
+                <input type="time" id="sundayStart" class="px-2 py-1 border border-gray-300 rounded">
+                <input type="time" id="sundayEnd" class="px-2 py-1 border border-gray-300 rounded">
+              </div>
+            </div>
+          </div>
+
+          <div class="flex justify-end space-x-3">
+            <button type="button" onclick="closeStaffModal()" class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+              キャンセル
+            </button>
+            <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+              保存
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- スケジュール -->
+    <div id="scheduleSection" class="section hidden">
+      <div class="bg-white rounded-lg shadow">
+        <div class="p-6 border-b">
+          <h2 class="text-lg font-bold">週間スケジュール</h2>
+        </div>
+        <div class="p-6">
+          <div id="weeklySchedule">
+            <!-- スケジュールがここに表示されます -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    // Firebase SDKのインポート
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+    import { getFirestore, collection, getDocs, query, orderBy, deleteDoc, doc, addDoc, updateDoc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+    // Firebase設定
+    const firebaseConfig = {
+      apiKey: "AIzaSyDbcAHRmhBGfUoqpf-LzgyrPdSRmGeJtDU",
+      authDomain: "asano-dance-school-8b670.firebaseapp.com",
+      projectId: "asano-dance-school-8b670",
+      storageBucket: "asano-dance-school-8b670.firebasestorage.app",
+      messagingSenderId: "167959563019",
+      appId: "1:167959563019:web:840229f09cbcf86ae3300e"
+    };
+
+    // Firebaseの初期化
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // スタッフ情報
+    const staffData = {
+      asano: {
+        name: "浅野英之",
+        specialty: ["スタンダード"],
+        schedule: {
+          monday: { start: "11:00", end: "20:00" },
+          tuesday: { start: "11:00", end: "20:00" },
+          wednesday: { start: "11:00", end: "20:00" },
+          thursday: { start: "11:00", end: "20:00" },
+          friday: { start: "11:00", end: "20:00" }
+        }
+      },
+      tsunokake: {
+        name: "角掛英典",
+        specialty: ["スタンダード"],
+        schedule: {
+          monday: { start: "12:00", end: "19:00" },
+          friday: { start: "12:00", end: "19:00" }
+        }
+      },
+      suzuki: {
+        name: "鈴木善子",
+        specialty: ["スタンダード", "ラテンアメリカン"],
+        schedule: {
+          wednesday: { start: "12:00", end: "18:00" }
+        }
+      },
+      hosaka: {
+        name: "穂坂 礼",
+        specialty: ["スタンダード"],
+        schedule: {
+          monday: { start: "12:00", end: "19:00" },
+          friday: { start: "14:30", end: "19:00" }
+        }
+      },
+      mimoto: {
+        name: "見元克至",
+        specialty: ["スタンダード", "ラテンアメリカン"],
+        schedule: {
+          monday: { start: "12:00", end: "15:30" },
+          friday: { start: "12:00", end: "15:30" }
+        }
+      },
+      nakayama: {
+        name: "仲山 領",
+        specialty: ["スタンダード", "ラテンアメリカン"],
+        schedule: {
+          thursday: { start: "12:00", end: "14:30" }
+        }
+      }
+    };
+
+    // 認証チェック
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        document.getElementById('userEmail').textContent = user.email;
+        loadDashboard();
+      } else {
+        window.location.href = 'admin-login.html';
+      }
+    });
+
+    // ログアウト
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      if (confirm('ログアウトしますか?')) {
+        await signOut(auth);
+        window.location.href = 'admin-login.html';
+      }
+    });
+
+    // ナビゲーション
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        // ページタイトル更新
+        const titles = {
+          'dashboard': 'ダッシュボード',
+          'calendar': 'カレンダー',
+          'bookings': '予約管理',
+          'staff': 'スタッフ管理',
+          'schedule': 'スケジュール'
+        };
+        document.getElementById('pageTitle').textContent = titles[btn.getAttribute('data-section')];
+
+        // アクティブ状態を切り替え
+        document.querySelectorAll('.nav-btn').forEach(b => {
+          b.classList.remove('active', 'bg-blue-50', 'text-blue-600');
+          b.classList.add('text-gray-600', 'hover:bg-gray-50');
+        });
+        btn.classList.add('active', 'bg-blue-50', 'text-blue-600');
+        btn.classList.remove('text-gray-600', 'hover:bg-gray-50');
+
+        // セクションを切り替え
+        const section = btn.getAttribute('data-section');
+        document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
+        document.getElementById(section + 'Section').classList.remove('hidden');
+
+        // セクションごとのデータ読み込み
+        if (section === 'calendar') loadCalendar();
+        if (section === 'bookings') loadAllBookings();
+        if (section === 'staff') loadStaffManagement();
+        if (section === 'schedule') loadWeeklySchedule();
+      });
+    });
+
+    // カレンダー関連の変数
+    let currentYear = new Date().getFullYear();
+    let currentMonth = new Date().getMonth();
+    let allBookingsData = [];
+
+    // カレンダー読み込み
+    async function loadCalendar() {
+      // 予約データを取得
+      try {
+        const bookingsQuery = query(collection(db, 'bookings'), orderBy('date', 'asc'));
+        const querySnapshot = await getDocs(bookingsQuery);
+        
+        allBookingsData = [];
+        querySnapshot.forEach((doc) => {
+          allBookingsData.push({ id: doc.id, ...doc.data() });
+        });
+
+        renderCalendar();
+        
+      } catch (error) {
+        console.error('カレンダー読み込みエラー:', error);
+      }
+    }
+
+    // カレンダー描画
+    function renderCalendar() {
+      const year = currentYear;
+      const month = currentMonth;
+      
+      // 月の表示
+      const monthNames = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+      document.getElementById('currentMonth').textContent = `${year}年 ${monthNames[month]}`;
+      
+      // カレンダーグリッド
+      const firstDay = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      
+      let html = '';
+      
+      // 曜日ヘッダー
+      const dayNames = ['日', '月', '火', '水', '木', '金', '土'];
+      dayNames.forEach(day => {
+        html += `<div class="text-center font-semibold text-gray-600 py-2">${day}</div>`;
+      });
+      
+      // 空白セル（月の最初の曜日まで）
+      for (let i = 0; i < firstDay; i++) {
+        html += '<div class="aspect-square"></div>';
+      }
+      
+      // 日付セル
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const bookingsOnDay = allBookingsData.filter(b => b.date === dateStr);
+        const count = bookingsOnDay.length;
+        
+        const isToday = dateStr === new Date().toISOString().split('T')[0];
+        const isSunday = (firstDay + day - 1) % 7 === 0;
+        const isSaturday = (firstDay + day - 1) % 7 === 6;
+        
+        let bgColor = 'bg-white hover:bg-gray-50';
+        let textColor = 'text-gray-800';
+        
+        if (isToday) {
+          bgColor = 'bg-blue-50 hover:bg-blue-100';
+          textColor = 'text-blue-600 font-bold';
+        }
+        if (isSunday) textColor = 'text-red-600';
+        if (isSaturday) textColor = 'text-blue-600';
+        
+        html += `
+          <div class="aspect-square border rounded-lg ${bgColor} cursor-pointer transition" onclick="showDayDetails('${dateStr}')">
+            <div class="h-full flex flex-col p-2">
+              <div class="${textColor} text-sm font-medium">${day}</div>
+              ${count > 0 ? `
+                <div class="flex-1 flex items-center justify-center">
+                  <div class="bg-blue-600 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
+                    ${count}
+                  </div>
+                </div>
+              ` : ''}
+            </div>
+          </div>
+        `;
+      }
+      
+      document.getElementById('calendarGrid').innerHTML = html;
+    }
+
+    // 日付の詳細を表示
+    window.showDayDetails = function(dateStr) {
+      const bookingsOnDay = allBookingsData.filter(b => b.date === dateStr);
+      
+      if (bookingsOnDay.length === 0) {
+        document.getElementById('dayDetails').classList.add('hidden');
+        return;
+      }
+      
+      // 時間順にソート
+      bookingsOnDay.sort((a, b) => a.time.localeCompare(b.time));
+      
+      // 日付を整形
+      const date = new Date(dateStr);
+      const formatted = `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日（${['日', '月', '火', '水', '木', '金', '土'][date.getDay()]}）`;
+      
+      document.getElementById('selectedDate').textContent = formatted;
+      
+      let html = '<div class="space-y-3">';
+      bookingsOnDay.forEach(booking => {
+        html += `
+          <div class="border rounded-lg p-4 hover:bg-gray-50">
+            <div class="flex justify-between items-start mb-3">
+              <div>
+                <div class="font-semibold text-gray-800 mb-1">${booking.name}</div>
+                <div class="text-sm text-gray-600">📞 ${booking.phone}</div>
+              </div>
+              <div class="text-right">
+                <div class="text-lg font-bold text-blue-600">${booking.time}</div>
+                <div class="text-sm text-gray-600">${booking.lessonType}</div>
+              </div>
+            </div>
+            ${booking.message ? `<div class="mt-2 p-2 bg-yellow-50 rounded text-sm">💬 ${booking.message}</div>` : ''}
+          </div>
+        `;
+      });
+      html += '</div>';
+      
+      document.getElementById('dayBookings').innerHTML = html;
+      document.getElementById('dayDetails').classList.remove('hidden');
+      
+      // スクロール
+      document.getElementById('dayDetails').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+
+    // 前月・次月ボタン
+    document.getElementById('prevMonth').addEventListener('click', () => {
+      currentMonth--;
+      if (currentMonth < 0) {
+        currentMonth = 11;
+        currentYear--;
+      }
+      renderCalendar();
+      document.getElementById('dayDetails').classList.add('hidden');
+    });
+
+    document.getElementById('nextMonth').addEventListener('click', () => {
+      currentMonth++;
+      if (currentMonth > 11) {
+        currentMonth = 0;
+        currentYear++;
+      }
+      renderCalendar();
+      document.getElementById('dayDetails').classList.add('hidden');
+    });
+
+    // ダッシュボード読み込み
+    async function loadDashboard() {
+      try {
+        const bookingsQuery = query(collection(db, 'bookings'), orderBy('createdAt', 'desc'));
+        const querySnapshot = await getDocs(bookingsQuery);
+        
+        const bookings = [];
+        querySnapshot.forEach((doc) => {
+          bookings.push({ id: doc.id, ...doc.data() });
+        });
+
+        // 統計を計算
+        const today = new Date().toISOString().split('T')[0];
+        const todayBookings = bookings.filter(b => b.date === today);
+        
+        const now = new Date();
+        const weekStart = new Date(now.setDate(now.getDate() - now.getDay()));
+        const weekEnd = new Date(weekStart);
+        weekEnd.setDate(weekEnd.getDate() + 6);
+        const weekBookings = bookings.filter(b => {
+          const bookingDate = new Date(b.date);
+          return bookingDate >= weekStart && bookingDate <= weekEnd;
+        });
+
+        document.getElementById('todayBookings').textContent = todayBookings.length;
+        document.getElementById('weekBookings').textContent = weekBookings.length;
+        document.getElementById('totalBookings').textContent = bookings.length;
+
+        // 最近の予約を表示
+        displayRecentBookings(bookings.slice(0, 5));
+        
+      } catch (error) {
+        console.error('データ読み込みエラー:', error);
+      }
+    }
+
+    // 最近の予約を表示
+    function displayRecentBookings(bookings) {
+      const container = document.getElementById('recentBookings');
+      
+      if (bookings.length === 0) {
+        container.innerHTML = '<p class="text-gray-500 text-center py-8">予約がありません</p>';
+        return;
+      }
+
+      let html = '<div class="space-y-4">';
+      bookings.forEach(booking => {
+        html += `
+          <div class="border rounded-lg p-4 hover:bg-gray-50">
+            <div class="flex justify-between items-start mb-2">
+              <div class="font-semibold text-gray-800">${booking.name}</div>
+              <div class="text-sm text-gray-500">${new Date(booking.createdAt).toLocaleDateString('ja-JP')}</div>
+            </div>
+            <div class="grid grid-cols-2 gap-2 text-sm text-gray-600">
+              <div>📅 ${booking.date} ${booking.time}</div>
+              <div>📚 ${booking.lessonType}</div>
+              <div>📞 ${booking.phone}</div>
+              ${booking.email ? `<div>📧 ${booking.email}</div>` : ''}
+            </div>
+          </div>
+        `;
+      });
+      html += '</div>';
+      
+      container.innerHTML = html;
+    }
+
+    // 全予約を表示
+    async function loadAllBookings() {
+      try {
+        const bookingsQuery = query(collection(db, 'bookings'), orderBy('date', 'asc'));
+        const querySnapshot = await getDocs(bookingsQuery);
+        
+        const bookings = [];
+        querySnapshot.forEach((doc) => {
+          bookings.push({ id: doc.id, ...doc.data() });
+        });
+
+        const container = document.getElementById('allBookings');
+        
+        if (bookings.length === 0) {
+          container.innerHTML = '<p class="text-gray-500 text-center py-8">予約がありません</p>';
+          return;
+        }
+
+        let html = '<div class="space-y-3">';
+        bookings.forEach(booking => {
+          html += `
+            <div class="border rounded-lg p-4 hover:bg-gray-50">
+              <div class="flex justify-between items-start mb-3">
+                <div>
+                  <div class="font-semibold text-gray-800 mb-1">${booking.name}</div>
+                  <div class="text-sm text-gray-600">📞 ${booking.phone}</div>
+                  ${booking.email ? `<div class="text-sm text-gray-600">📧 ${booking.email}</div>` : ''}
+                </div>
+                <button onclick="deleteBooking('${booking.id}')" class="text-red-600 hover:text-red-800 text-sm">
+                  削除
+                </button>
+              </div>
+              <div class="grid grid-cols-3 gap-2 text-sm">
+                <div class="bg-blue-50 p-2 rounded">
+                  <div class="text-xs text-gray-600">日時</div>
+                  <div class="font-medium">${booking.date} ${booking.time}</div>
+                </div>
+                <div class="bg-green-50 p-2 rounded">
+                  <div class="text-xs text-gray-600">レッスン</div>
+                  <div class="font-medium">${booking.lessonType}</div>
+                </div>
+                <div class="bg-gray-50 p-2 rounded">
+                  <div class="text-xs text-gray-600">ステータス</div>
+                  <div class="font-medium">${booking.status || '確定'}</div>
+                </div>
+              </div>
+              ${booking.message ? `<div class="mt-3 p-2 bg-yellow-50 rounded text-sm">💬 ${booking.message}</div>` : ''}
+            </div>
+          `;
+        });
+        html += '</div>';
+        
+        container.innerHTML = html;
+        
+      } catch (error) {
+        console.error('予約読み込みエラー:', error);
+      }
+    }
+
+    // 予約削除
+    window.deleteBooking = async function(bookingId) {
+      if (!confirm('この予約を削除しますか?')) return;
+      
+      try {
+        await deleteDoc(doc(db, 'bookings', bookingId));
+        alert('予約を削除しました');
+        loadAllBookings();
+        loadDashboard();
+      } catch (error) {
+        console.error('削除エラー:', error);
+        alert('削除に失敗しました');
+      }
+    };
+
+    // スタッフリスト表示
+    function loadStaffList() {
+      const container = document.getElementById('staffList');
+      let html = '';
+      
+      Object.entries(staffData).forEach(([id, staff]) => {
+        const workDays = Object.keys(staff.schedule).map(day => {
+          const dayNames = {
+            monday: '月', tuesday: '火', wednesday: '水',
+            thursday: '木', friday: '金', saturday: '土', sunday: '日'
+          };
+          return dayNames[day];
+        }).join('・');
+
+        html += `
+          <div class="border rounded-lg p-4">
+            <div class="font-semibold text-gray-800 mb-2">${staff.name}</div>
+            <div class="space-y-1 text-sm">
+              <div class="text-gray-600">
+                <span class="font-medium">担当:</span> ${staff.specialty.join('・')}
+              </div>
+              <div class="text-gray-600">
+                <span class="font-medium">勤務:</span> ${workDays}曜日
+              </div>
+            </div>
+          </div>
+        `;
+      });
+      
+      container.innerHTML = html;
+    }
+
+    // スタッフ管理機能
+    async function loadStaffManagement() {
+      try {
+        const staffQuery = query(collection(db, 'staff'));
+        const querySnapshot = await getDocs(staffQuery);
+        
+        const container = document.getElementById('staffListManagement');
+        
+        if (querySnapshot.empty) {
+          container.innerHTML = '<p class="text-gray-500 text-center py-8">スタッフが登録されていません</p>';
+          return;
+        }
+
+        let html = '';
+        querySnapshot.forEach((doc) => {
+          const staff = doc.data();
+          const schedule = staff.schedule || {};
+          const workDays = Object.keys(schedule).map(day => {
+            const dayNames = {
+              monday: '月', tuesday: '火', wednesday: '水',
+              thursday: '木', friday: '金', saturday: '土', sunday: '日'
+            };
+            return dayNames[day];
+          }).join('・');
+
+          html += `
+            <div class="border rounded-lg p-4 flex items-start space-x-4">
+              ${staff.photo ? `
+                <img src="${staff.photo}" alt="${staff.name}" class="w-16 h-16 rounded-full object-cover">
+              ` : `
+                <div class="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center text-2xl">
+                  ${staff.name.charAt(0)}
+                </div>
+              `}
+              <div class="flex-1">
+                <h3 class="font-bold text-lg mb-1">${staff.name}</h3>
+                <div class="text-sm text-gray-600 space-y-1">
+                  <div><span class="font-medium">担当:</span> ${staff.specialty.join('・')}</div>
+                  <div><span class="font-medium">勤務:</span> ${workDays}曜日</div>
+                </div>
+              </div>
+              <div class="flex flex-col space-y-2">
+                <button onclick="editStaff('${doc.id}')" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                  編集
+                </button>
+                <button onclick="deleteStaff('${doc.id}', '${staff.name}')" class="text-red-600 hover:text-red-800 text-sm font-medium">
+                  削除
+                </button>
+              </div>
+            </div>
+          `;
+        });
+        
+        container.innerHTML = html;
+        
+      } catch (error) {
+        console.error('スタッフ読み込みエラー:', error);
+      }
+    }
+
+    // モーダル開閉
+    window.openStaffModal = function() {
+      document.getElementById('staffModal').classList.remove('hidden');
+      document.getElementById('modalTitle').textContent = 'スタッフ追加';
+      document.getElementById('staffForm').reset();
+      document.getElementById('staffId').value = '';
+    };
+
+    window.closeStaffModal = function() {
+      document.getElementById('staffModal').classList.add('hidden');
+      document.getElementById('staffForm').reset();
+    };
+
+    // スタッフ追加ボタン
+    document.getElementById('addStaffBtn').addEventListener('click', openStaffModal);
+
+    // スタッフ編集
+    window.editStaff = async function(staffId) {
+      try {
+        const docRef = doc(db, 'staff', staffId);
+        const docSnap = await getDoc(docRef);
+        
+        if (docSnap.exists()) {
+          const staff = docSnap.data();
+          
+          document.getElementById('staffId').value = staffId;
+          document.getElementById('staffName').value = staff.name;
+          document.getElementById('staffPhoto').value = staff.photo || '';
+          
+          // 担当種目
+          document.querySelectorAll('.specialty-checkbox').forEach(cb => {
+            cb.checked = staff.specialty.includes(cb.value);
+          });
+          
+          // スケジュール
+          const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+          days.forEach(day => {
+            const checkbox = document.getElementById(day);
+            const startInput = document.getElementById(day + 'Start');
+            const endInput = document.getElementById(day + 'End');
+            
+            if (staff.schedule && staff.schedule[day]) {
+              checkbox.checked = true;
+              startInput.value = staff.schedule[day].start;
+              endInput.value = staff.schedule[day].end;
+            } else {
+              checkbox.checked = false;
+              startInput.value = '';
+              endInput.value = '';
+            }
+          });
+          
+          document.getElementById('modalTitle').textContent = 'スタッフ編集';
+          document.getElementById('staffModal').classList.remove('hidden');
+        }
+      } catch (error) {
+        console.error('スタッフ読み込みエラー:', error);
+        alert('スタッフ情報の読み込みに失敗しました');
+      }
+    };
+
+    // スタッフ削除
+    window.deleteStaff = async function(staffId, staffName) {
+      if (!confirm(`${staffName} を削除しますか？`)) return;
+      
+      try {
+        await deleteDoc(doc(db, 'staff', staffId));
+        alert('スタッフを削除しました');
+        loadStaffManagement();
+      } catch (error) {
+        console.error('削除エラー:', error);
+        alert('削除に失敗しました');
+      }
+    };
+
+    // スタッフフォーム送信
+    document.getElementById('staffForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const staffId = document.getElementById('staffId').value;
+      const name = document.getElementById('staffName').value;
+      const photo = document.getElementById('staffPhoto').value;
+      
+      // 担当種目
+      const specialty = [];
+      document.querySelectorAll('.specialty-checkbox:checked').forEach(cb => {
+        specialty.push(cb.value);
+      });
+      
+      if (specialty.length === 0) {
+        alert('担当種目を1つ以上選択してください');
+        return;
+      }
+      
+      // スケジュール
+      const schedule = {};
+      const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+      days.forEach(day => {
+        const checkbox = document.getElementById(day);
+        if (checkbox.checked) {
+          const start = document.getElementById(day + 'Start').value;
+          const end = document.getElementById(day + 'End').value;
+          if (start && end) {
+            schedule[day] = { start, end };
+          }
+        }
+      });
+      
+      const staffData = {
+        name,
+        photo,
+        specialty,
+        schedule,
+        updatedAt: new Date().toISOString()
+      };
+      
+      try {
+        if (staffId) {
+          // 更新
+          await updateDoc(doc(db, 'staff', staffId), staffData);
+          alert('スタッフ情報を更新しました');
+        } else {
+          // 新規追加
+          staffData.createdAt = new Date().toISOString();
+          await addDoc(collection(db, 'staff'), staffData);
+          alert('スタッフを追加しました');
+        }
+        
+        closeStaffModal();
+        loadStaffManagement();
+        
+      } catch (error) {
+        console.error('保存エラー:', error);
+        alert('保存に失敗しました');
+      }
+    });
+
+    // 週間スケジュール表示
+    function loadWeeklySchedule() {
+      const container = document.getElementById('weeklySchedule');
+      const days = ['月', '火', '水', '木', '金'];
+      const dayKeys = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
+      
+      let html = '<div class="space-y-6">';
+      
+      days.forEach((day, index) => {
+        const dayKey = dayKeys[index];
+        const staffOnDuty = Object.entries(staffData).filter(([id, staff]) => 
+          staff.schedule[dayKey]
+        );
+
+        html += `
+          <div class="border rounded-lg p-4">
+            <h3 class="font-bold text-lg mb-3">${day}曜日</h3>
+            ${staffOnDuty.length === 0 ? 
+              '<p class="text-gray-500">勤務スタッフなし</p>' :
+              '<div class="space-y-2">' +
+              staffOnDuty.map(([id, staff]) => `
+                <div class="flex justify-between items-center bg-gray-50 p-3 rounded">
+                  <div>
+                    <div class="font-medium">${staff.name}</div>
+                    <div class="text-sm text-gray-600">${staff.specialty.join('・')}</div>
+                  </div>
+                  <div class="text-sm font-medium text-blue-600">
+                    ${staff.schedule[dayKey].start} - ${staff.schedule[dayKey].end}
+                  </div>
+                </div>
+              `).join('') +
+              '</div>'
+            }
+          </div>
+        `;
+      });
+      
+      html += '</div>';
+      container.innerHTML = html;
+    }
+
+    // 初期化時にactiveクラスを設定
+    document.querySelector('.nav-btn.active').classList.add('bg-blue-50', 'text-blue-600');
+    
+    // 現在の日付を表示
+    const today = new Date();
+    const dateStr = `${today.getFullYear()}年${today.getMonth() + 1}月${today.getDate()}日`;
+    document.getElementById('currentDate').textContent = dateStr;
+  </script>
+</body>
+</html>
