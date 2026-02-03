@@ -5,68 +5,138 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>管理画面 - アサノダンススクール</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      font-family: 'M PLUS Rounded 1c', sans-serif;
+    }
+    body {
+      background: #F8FAFB;
+    }
+    .stat-card {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    .stat-card-blue {
+      background: linear-gradient(135deg, #4A90E2 0%, #63B3ED 100%);
+    }
+    .stat-card-green {
+      background: linear-gradient(135deg, #10B981 0%, #34D399 100%);
+    }
+    .stat-card-orange {
+      background: linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%);
+    }
+  </style>
 </head>
-<body class="bg-gray-50">
-  <!-- ヘッダー -->
-  <header class="bg-white shadow-sm">
-    <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-      <div>
-        <h1 class="text-xl font-bold text-gray-800">アサノダンススクール</h1>
-        <p class="text-sm text-gray-600">管理画面</p>
+<body>
+  <!-- サイドバー -->
+  <div class="flex h-screen">
+    <div class="w-64 bg-white border-r border-gray-200 hidden md:block">
+      <div class="p-6">
+        <h1 class="text-2xl font-bold text-gray-900">アサノダンス</h1>
+        <p class="text-sm text-gray-500">管理画面</p>
       </div>
-      <div class="flex items-center space-x-4">
-        <span id="userEmail" class="text-sm text-gray-600"></span>
-        <button id="logoutBtn" class="text-sm text-red-600 hover:text-red-800">
-          ログアウト
+      
+      <nav class="px-4 space-y-1">
+        <button class="nav-btn active w-full text-left px-4 py-3 rounded-lg font-medium text-sm flex items-center space-x-3" data-section="dashboard">
+          <span>📊</span>
+          <span>ダッシュボード</span>
         </button>
+        <button class="nav-btn w-full text-left px-4 py-3 rounded-lg font-medium text-sm flex items-center space-x-3" data-section="calendar">
+          <span>📅</span>
+          <span>カレンダー</span>
+        </button>
+        <button class="nav-btn w-full text-left px-4 py-3 rounded-lg font-medium text-sm flex items-center space-x-3" data-section="bookings">
+          <span>📋</span>
+          <span>予約管理</span>
+        </button>
+        <button class="nav-btn w-full text-left px-4 py-3 rounded-lg font-medium text-sm flex items-center space-x-3" data-section="staff">
+          <span>👥</span>
+          <span>スタッフ管理</span>
+        </button>
+        <button class="nav-btn w-full text-left px-4 py-3 rounded-lg font-medium text-sm flex items-center space-x-3" data-section="schedule">
+          <span>🗓️</span>
+          <span>スケジュール</span>
+        </button>
+      </nav>
+
+      <div class="absolute bottom-0 w-64 p-4 border-t border-gray-200">
+        <div class="flex items-center justify-between">
+          <div class="text-sm">
+            <p class="font-medium text-gray-900" id="userEmail"></p>
+          </div>
+          <button id="logoutBtn" class="text-red-600 hover:text-red-800">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
-  </header>
 
-  <div class="max-w-7xl mx-auto px-4 py-8">
-    <!-- ナビゲーション -->
-    <nav class="mb-8">
-      <div class="flex space-x-1 bg-white rounded-lg p-1 shadow-sm overflow-x-auto">
-        <button class="nav-btn active px-4 py-2 rounded-lg font-medium text-sm whitespace-nowrap" data-section="dashboard">
-          ダッシュボード
-        </button>
-        <button class="nav-btn px-4 py-2 rounded-lg font-medium text-sm whitespace-nowrap" data-section="calendar">
-          📅 カレンダー
-        </button>
-        <button class="nav-btn px-4 py-2 rounded-lg font-medium text-sm whitespace-nowrap" data-section="bookings">
-          予約管理
-        </button>
-        <button class="nav-btn px-4 py-2 rounded-lg font-medium text-sm whitespace-nowrap" data-section="staff">
-          スタッフ管理
-        </button>
-        <button class="nav-btn px-4 py-2 rounded-lg font-medium text-sm whitespace-nowrap" data-section="schedule">
-          スケジュール
-        </button>
-      </div>
-    </nav>
+    <!-- メインコンテンツ -->
+    <div class="flex-1 overflow-y-auto">
+      <!-- トップバー -->
+      <header class="bg-white border-b border-gray-200 sticky top-0 z-10">
+        <div class="px-6 py-4 flex justify-between items-center">
+          <h2 class="text-2xl font-bold text-gray-900" id="pageTitle">ダッシュボード</h2>
+          <div class="flex items-center space-x-4">
+            <span class="text-sm text-gray-600" id="currentDate"></span>
+          </div>
+        </div>
+      </header>
+
+      <div class="p-6">
 
     <!-- ダッシュボード -->
     <div id="dashboardSection" class="section">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <!-- 統計カード -->
-        <div class="bg-white p-6 rounded-lg shadow">
-          <div class="text-sm text-gray-600 mb-2">今日の予約</div>
-          <div class="text-3xl font-bold text-blue-600" id="todayBookings">0</div>
+        <div class="stat-card-blue rounded-xl p-6 text-white shadow-lg">
+          <div class="flex items-center justify-between mb-4">
+            <div class="text-sm font-medium opacity-90">今日の予約</div>
+            <div class="bg-white bg-opacity-20 rounded-lg p-2">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+              </svg>
+            </div>
+          </div>
+          <div class="text-4xl font-bold" id="todayBookings">0</div>
+          <div class="text-sm opacity-80 mt-2">件</div>
         </div>
-        <div class="bg-white p-6 rounded-lg shadow">
-          <div class="text-sm text-gray-600 mb-2">今週の予約</div>
-          <div class="text-3xl font-bold text-green-600" id="weekBookings">0</div>
+        
+        <div class="stat-card-green rounded-xl p-6 text-white shadow-lg">
+          <div class="flex items-center justify-between mb-4">
+            <div class="text-sm font-medium opacity-90">今週の予約</div>
+            <div class="bg-white bg-opacity-20 rounded-lg p-2">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+              </svg>
+            </div>
+          </div>
+          <div class="text-4xl font-bold" id="weekBookings">0</div>
+          <div class="text-sm opacity-80 mt-2">件</div>
         </div>
-        <div class="bg-white p-6 rounded-lg shadow">
-          <div class="text-sm text-gray-600 mb-2">総予約数</div>
-          <div class="text-3xl font-bold text-gray-800" id="totalBookings">0</div>
+        
+        <div class="stat-card-orange rounded-xl p-6 text-white shadow-lg">
+          <div class="flex items-center justify-between mb-4">
+            <div class="text-sm font-medium opacity-90">総予約数</div>
+            <div class="bg-white bg-opacity-20 rounded-lg p-2">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+              </svg>
+            </div>
+          </div>
+          <div class="text-4xl font-bold" id="totalBookings">0</div>
+          <div class="text-sm opacity-80 mt-2">件</div>
         </div>
       </div>
 
       <!-- 最近の予約 -->
-      <div class="bg-white rounded-lg shadow">
-        <div class="p-6 border-b">
-          <h2 class="text-lg font-bold">最近の予約</h2>
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+        <div class="p-6 border-b border-gray-200">
+          <h2 class="text-lg font-bold text-gray-900">最近の予約</h2>
         </div>
         <div id="recentBookings" class="p-6">
           <p class="text-gray-500 text-center py-8">読み込み中...</p>
@@ -367,13 +437,23 @@
     // ナビゲーション
     document.querySelectorAll('.nav-btn').forEach(btn => {
       btn.addEventListener('click', () => {
+        // ページタイトル更新
+        const titles = {
+          'dashboard': 'ダッシュボード',
+          'calendar': 'カレンダー',
+          'bookings': '予約管理',
+          'staff': 'スタッフ管理',
+          'schedule': 'スケジュール'
+        };
+        document.getElementById('pageTitle').textContent = titles[btn.getAttribute('data-section')];
+
         // アクティブ状態を切り替え
         document.querySelectorAll('.nav-btn').forEach(b => {
-          b.classList.remove('active', 'bg-blue-600', 'text-white');
-          b.classList.add('text-gray-600', 'hover:bg-gray-100');
+          b.classList.remove('active', 'bg-blue-50', 'text-blue-600');
+          b.classList.add('text-gray-600', 'hover:bg-gray-50');
         });
-        btn.classList.add('active', 'bg-blue-600', 'text-white');
-        btn.classList.remove('text-gray-600', 'hover:bg-gray-100');
+        btn.classList.add('active', 'bg-blue-50', 'text-blue-600');
+        btn.classList.remove('text-gray-600', 'hover:bg-gray-50');
 
         // セクションを切り替え
         const section = btn.getAttribute('data-section');
@@ -955,7 +1035,12 @@
     }
 
     // 初期化時にactiveクラスを設定
-    document.querySelector('.nav-btn.active').classList.add('bg-blue-600', 'text-white');
+    document.querySelector('.nav-btn.active').classList.add('bg-blue-50', 'text-blue-600');
+    
+    // 現在の日付を表示
+    const today = new Date();
+    const dateStr = `${today.getFullYear()}年${today.getMonth() + 1}月${today.getDate()}日`;
+    document.getElementById('currentDate').textContent = dateStr;
   </script>
 </body>
 </html>
