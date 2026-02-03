@@ -146,14 +146,23 @@
 
     <!-- カレンダー -->
     <div id="calendarSection" class="section hidden">
-      <div class="bg-white rounded-lg shadow">
-        <div class="p-6 border-b flex justify-between items-center">
-          <button id="prevMonth" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium">
-            ← 前月
-          </button>
-          <h2 class="text-lg font-bold" id="currentMonth"></h2>
-          <button id="nextMonth" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium">
-            次月 →
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+        <div class="p-6 border-b border-gray-200 flex flex-col md:flex-row md:justify-between md:items-center space-y-4 md:space-y-0">
+          <div class="flex items-center space-x-4">
+            <button id="prevMonth" class="p-2 hover:bg-gray-100 rounded-lg transition">
+              <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+              </svg>
+            </button>
+            <h2 class="text-2xl font-bold text-gray-900" id="currentMonth"></h2>
+            <button id="nextMonth" class="p-2 hover:bg-gray-100 rounded-lg transition">
+              <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+              </svg>
+            </button>
+          </div>
+          <button onclick="loadCalendar()" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition text-sm font-medium">
+            🔄 更新
           </button>
         </div>
         <div class="p-6">
@@ -164,9 +173,14 @@
       </div>
 
       <!-- 選択した日の予約詳細 -->
-      <div id="dayDetails" class="mt-6 bg-white rounded-lg shadow hidden">
-        <div class="p-6 border-b">
-          <h3 class="text-lg font-bold" id="selectedDate"></h3>
+      <div id="dayDetails" class="mt-6 bg-white rounded-xl shadow-sm border border-gray-200 hidden">
+        <div class="p-6 border-b border-gray-200 flex justify-between items-center">
+          <h3 class="text-xl font-bold text-gray-900" id="selectedDate"></h3>
+          <button onclick="document.getElementById('dayDetails').classList.add('hidden')" class="text-gray-400 hover:text-gray-600">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
         </div>
         <div id="dayBookings" class="p-6">
           <!-- 予約詳細がここに表示されます -->
@@ -509,8 +523,9 @@
       
       // 曜日ヘッダー
       const dayNames = ['日', '月', '火', '水', '木', '金', '土'];
-      dayNames.forEach(day => {
-        html += `<div class="text-center font-semibold text-gray-600 py-2">${day}</div>`;
+      dayNames.forEach((day, index) => {
+        const textColor = index === 0 ? 'text-red-600' : index === 6 ? 'text-blue-600' : 'text-gray-600';
+        html += `<div class="text-center font-bold ${textColor} py-3 text-sm">${day}</div>`;
       });
       
       // 空白セル（月の最初の曜日まで）
@@ -528,24 +543,28 @@
         const isSunday = (firstDay + day - 1) % 7 === 0;
         const isSaturday = (firstDay + day - 1) % 7 === 6;
         
-        let bgColor = 'bg-white hover:bg-gray-50';
+        let bgColor = 'bg-white hover:bg-blue-50 border-2 border-gray-100';
         let textColor = 'text-gray-800';
+        let badgeColor = 'bg-blue-500';
         
         if (isToday) {
-          bgColor = 'bg-blue-50 hover:bg-blue-100';
+          bgColor = 'bg-blue-50 border-2 border-blue-500';
           textColor = 'text-blue-600 font-bold';
         }
         if (isSunday) textColor = 'text-red-600';
         if (isSaturday) textColor = 'text-blue-600';
         
+        if (count > 5) badgeColor = 'bg-red-500';
+        else if (count > 2) badgeColor = 'bg-orange-500';
+        
         html += `
-          <div class="aspect-square border rounded-lg ${bgColor} cursor-pointer transition" onclick="showDayDetails('${dateStr}')">
+          <div class="aspect-square ${bgColor} rounded-lg cursor-pointer transition transform hover:scale-105" onclick="showDayDetails('${dateStr}')">
             <div class="h-full flex flex-col p-2">
-              <div class="${textColor} text-sm font-medium">${day}</div>
+              <div class="${textColor} text-base font-semibold mb-1">${day}</div>
               ${count > 0 ? `
                 <div class="flex-1 flex items-center justify-center">
-                  <div class="bg-blue-600 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
-                    ${count}
+                  <div class="${badgeColor} text-white text-xs font-bold rounded-full px-2 py-1">
+                    ${count}件
                   </div>
                 </div>
               ` : ''}
@@ -576,20 +595,24 @@
       document.getElementById('selectedDate').textContent = formatted;
       
       let html = '<div class="space-y-3">';
-      bookingsOnDay.forEach(booking => {
+      bookingsOnDay.forEach((booking, index) => {
+        const colors = ['border-blue-200 bg-blue-50', 'border-green-200 bg-green-50', 'border-purple-200 bg-purple-50', 'border-orange-200 bg-orange-50'];
+        const color = colors[index % colors.length];
+        
         html += `
-          <div class="border rounded-lg p-4 hover:bg-gray-50">
+          <div class="border-l-4 ${color} rounded-lg p-4 transition hover:shadow-md">
             <div class="flex justify-between items-start mb-3">
               <div>
-                <div class="font-semibold text-gray-800 mb-1">${booking.name}</div>
+                <div class="font-bold text-gray-900 text-lg mb-1">${booking.name}</div>
                 <div class="text-sm text-gray-600">📞 ${booking.phone}</div>
+                ${booking.email ? `<div class="text-sm text-gray-600">📧 ${booking.email}</div>` : ''}
               </div>
               <div class="text-right">
-                <div class="text-lg font-bold text-blue-600">${booking.time}</div>
-                <div class="text-sm text-gray-600">${booking.lessonType}</div>
+                <div class="text-2xl font-bold text-blue-600">${booking.time}</div>
+                <div class="text-sm text-gray-600 mt-1">${booking.lessonType}</div>
               </div>
             </div>
-            ${booking.message ? `<div class="mt-2 p-2 bg-yellow-50 rounded text-sm">💬 ${booking.message}</div>` : ''}
+            ${booking.message ? `<div class="mt-3 p-3 bg-white rounded-lg border border-gray-200 text-sm">💬 ${booking.message}</div>` : ''}
           </div>
         `;
       });
@@ -599,7 +622,9 @@
       document.getElementById('dayDetails').classList.remove('hidden');
       
       // スクロール
-      document.getElementById('dayDetails').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      setTimeout(() => {
+        document.getElementById('dayDetails').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
     };
 
     // 前月・次月ボタン
