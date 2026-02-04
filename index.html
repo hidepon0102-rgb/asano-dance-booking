@@ -430,13 +430,16 @@
     window.goToStep = function(step) {
       // バリデーション
       if (step === 2 && !validateStep1()) return;
-      if (step === 3) { const staff = document.querySelector('input[name="staffSelect"]:checked'); if (!staff) { alert('スタッフを選択してください'); return; } }
+      // スタッフ選択は任意なのでバリデーションなし
       if (step === 4 && !validateStep3()) return;
       if (step === 5 && !validateStep4()) return;
 
       // データ保存
       if (step === 2) saveStep1();
-      if (step === 3) { const staff = document.querySelector('input[name="staffSelect"]:checked'); selectedStaff = staff ? staff.value : null; }
+      if (step === 3) {
+        const staff = document.querySelector('input[name="staffSelect"]:checked');
+        selectedStaff = staff ? staff.value : null;
+      }
       if (step === 4) saveStep3();
       if (step === 5) saveStep4();
 
