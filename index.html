@@ -96,9 +96,17 @@
   
   <!-- ヘッダー -->
   <div class="bg-white border-b border-gray-200 py-4 md:py-6">
-    <div class="max-w-5xl mx-auto px-3 md:px-4">
-      <h1 class="text-2xl md:text-3xl font-bold text-gray-900">アサノダンススクール</h1>
-      <p class="text-sm md:text-base text-gray-600 mt-1">レッスン予約</p>
+    <div class="max-w-5xl mx-auto px-3 md:px-4 flex justify-between items-center">
+      <div>
+        <h1 class="text-2xl md:text-3xl font-bold text-gray-900">アサノダンススクール</h1>
+        <p class="text-sm md:text-base text-gray-600 mt-1">レッスン予約</p>
+      </div>
+      <button onclick="location.reload()" class="text-sm text-gray-600 hover:text-blue-600 flex items-center space-x-1">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+        </svg>
+        <span class="hidden md:inline">トップへ</span>
+      </button>
     </div>
   </div>
 
@@ -107,21 +115,25 @@
     
     <!-- ステップインジケーター -->
     <div class="mb-6 md:mb-8">
-      <div class="flex items-center justify-between max-w-2xl mx-auto">
+      <div class="flex items-center justify-between max-w-3xl mx-auto">
         <div id="step1-indicator" class="step-indicator active flex flex-col items-center flex-1">
           <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold mb-1 md:mb-2 text-sm md:text-base">1</div>
           <span class="text-xs md:text-sm font-medium text-gray-900">レッスン</span>
         </div>
         <div id="step2-indicator" class="step-indicator flex flex-col items-center flex-1">
           <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-bold mb-1 md:mb-2 text-sm md:text-base">2</div>
-          <span class="text-xs md:text-sm font-medium text-gray-500">日時</span>
+          <span class="text-xs md:text-sm font-medium text-gray-500">スタッフ</span>
         </div>
         <div id="step3-indicator" class="step-indicator flex flex-col items-center flex-1">
           <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-bold mb-1 md:mb-2 text-sm md:text-base">3</div>
-          <span class="text-xs md:text-sm font-medium text-gray-500">情報</span>
+          <span class="text-xs md:text-sm font-medium text-gray-500">日時</span>
         </div>
         <div id="step4-indicator" class="step-indicator flex flex-col items-center flex-1">
           <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-bold mb-1 md:mb-2 text-sm md:text-base">4</div>
+          <span class="text-xs md:text-sm font-medium text-gray-500">情報</span>
+        </div>
+        <div id="step5-indicator" class="step-indicator flex flex-col items-center flex-1">
+          <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-bold mb-1 md:mb-2 text-sm md:text-base">5</div>
           <span class="text-xs md:text-sm font-medium text-gray-500">確認</span>
         </div>
       </div>
@@ -207,8 +219,45 @@
         </div>
       </div>
 
-      <!-- ステップ2: 日時選択 -->
+      <!-- ステップ2: スタッフ選択 -->
       <div id="step2" class="step-content hidden">
+        <h2 class="text-xl md:text-2xl font-bold text-gray-900 mb-4 md:mb-6">スタッフを選択してください</h2>
+        
+        <div id="staffSelection" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- スタッフがここに表示されます -->
+          <p class="text-gray-500 text-center py-8 col-span-2">読み込み中...</p>
+        </div>
+
+        <!-- おまかせオプション -->
+        <div class="mt-6">
+          <label class="lesson-card cursor-pointer">
+            <input type="radio" name="staffSelect" value="any" class="peer hidden">
+            <div class="border-2 border-gray-200 rounded-lg p-4 md:p-6 peer-checked:border-blue-500 peer-checked:bg-blue-50">
+              <div class="flex items-center space-x-3">
+                <div class="w-12 h-12 md:w-16 md:h-16 rounded-full bg-gray-200 flex items-center justify-center text-2xl">
+                  ✨
+                </div>
+                <div>
+                  <h3 class="text-base md:text-lg font-bold text-gray-900">おまかせ</h3>
+                  <p class="text-xs md:text-sm text-gray-600 mt-1">スタッフは指名しない</p>
+                </div>
+              </div>
+            </div>
+          </label>
+        </div>
+
+        <div class="mt-6 md:mt-8 flex justify-between">
+          <button onclick="goToStep(1)" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-6 md:px-8 py-2.5 md:py-3 rounded-lg font-bold transition text-sm md:text-base">
+            ← 戻る
+          </button>
+          <button onclick="goToStep(3)" class="bg-blue-500 hover:bg-blue-600 text-white px-6 md:px-8 py-2.5 md:py-3 rounded-lg font-bold transition text-sm md:text-base">
+            次へ →
+          </button>
+        </div>
+      </div>
+
+      <!-- ステップ3: 日時選択 -->
+      <div id="step3" class="step-content hidden">
         <h2 class="text-2xl font-bold text-gray-900 mb-6">日時を選択してください</h2>
         
         <!-- カレンダーコントロール -->
@@ -236,17 +285,17 @@
         </div>
 
         <div class="mt-6 md:mt-8 flex justify-between">
-          <button onclick="goToStep(1)" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-6 md:px-8 py-2.5 md:py-3 rounded-lg font-bold transition text-sm md:text-base">
+          <button onclick="goToStep(2)" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-6 md:px-8 py-2.5 md:py-3 rounded-lg font-bold transition text-sm md:text-base">
             ← 戻る
           </button>
-          <button id="step2Next" onclick="goToStep(3)" disabled class="bg-gray-300 text-gray-500 px-6 md:px-8 py-2.5 md:py-3 rounded-lg font-bold cursor-not-allowed text-sm md:text-base">
+          <button id="step3Next" onclick="goToStep(4)" disabled class="bg-gray-300 text-gray-500 px-6 md:px-8 py-2.5 md:py-3 rounded-lg font-bold cursor-not-allowed text-sm md:text-base">
             次へ →
           </button>
         </div>
       </div>
 
-      <!-- ステップ3: お客様情報 -->
-      <div id="step3" class="step-content hidden">
+      <!-- ステップ4: お客様情報 -->
+      <div id="step4" class="step-content hidden">
         <h2 class="text-2xl font-bold text-gray-900 mb-6">お客様情報を入力してください</h2>
         
         <div class="space-y-6">
@@ -319,17 +368,17 @@
         </div>
 
         <div class="mt-6 md:mt-8 flex justify-between">
-          <button onclick="goToStep(2)" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-6 md:px-8 py-2.5 md:py-3 rounded-lg font-bold transition text-sm md:text-base">
+          <button onclick="goToStep(3)" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-6 md:px-8 py-2.5 md:py-3 rounded-lg font-bold transition text-sm md:text-base">
             ← 戻る
           </button>
-          <button onclick="goToStep(4)" class="bg-blue-500 hover:bg-blue-600 text-white px-6 md:px-8 py-2.5 md:py-3 rounded-lg font-bold transition text-sm md:text-base">
+          <button onclick="goToStep(5)" class="bg-blue-500 hover:bg-blue-600 text-white px-6 md:px-8 py-2.5 md:py-3 rounded-lg font-bold transition text-sm md:text-base">
             次へ →
           </button>
         </div>
       </div>
 
-      <!-- ステップ4: 確認 -->
-      <div id="step4" class="step-content hidden">
+      <!-- ステップ5: 確認 -->
+      <div id="step5" class="step-content hidden">
         <h2 class="text-2xl font-bold text-gray-900 mb-6">予約内容の確認</h2>
         
         <div id="confirmationContent" class="bg-gray-50 rounded-lg p-6 space-y-4 mb-8"></div>
@@ -381,13 +430,15 @@
     window.goToStep = function(step) {
       // バリデーション
       if (step === 2 && !validateStep1()) return;
-      if (step === 3 && !validateStep2()) return;
+      if (step === 3) { const staff = document.querySelector('input[name="staffSelect"]:checked'); if (!staff) { alert('スタッフを選択してください'); return; } }
       if (step === 4 && !validateStep3()) return;
+      if (step === 5 && !validateStep4()) return;
 
       // データ保存
       if (step === 2) saveStep1();
-      if (step === 3) saveStep2();
+      if (step === 3) { const staff = document.querySelector('input[name="staffSelect"]:checked'); selectedStaff = staff ? staff.value : null; }
       if (step === 4) saveStep3();
+      if (step === 5) saveStep4();
 
       // UI更新
       document.getElementById(`step${currentStep}`).classList.add('hidden');
@@ -396,15 +447,16 @@
 
       updateStepIndicators(step);
 
-      if (step === 2 && currentStep === 1) renderCalendar();
-      if (step === 4) showConfirmation();
+      if (step === 2 && currentStep === 1) loadStaffList();
+      if (step === 3 && currentStep === 2) renderCalendar();
+      if (step === 5) showConfirmation();
 
       currentStep = step;
       window.scrollTo(0, 0);
     };
 
     function updateStepIndicators(step) {
-      for (let i = 1; i <= 4; i++) {
+      for (let i = 1; i <= 5; i++) {
         const indicator = document.getElementById(`step${i}-indicator`);
         const circle = indicator.querySelector('div');
         const text = indicator.querySelector('span');
@@ -428,17 +480,11 @@
       }
     }
 
-    // バリデーション
-    function validateStep1() {
-      const lesson = document.querySelector('input[name="lessonType"]:checked');
-      if (!lesson) {
-        alert('レッスンタイプを選択してください');
-        return false;
-      }
-      return true;
+    function validateStep2() {
+      return true; // スタッフ選択は必須ではない
     }
 
-    function validateStep2() {
+    function validateStep3() {
       if (!selectedDate || !selectedTime) {
         alert('日時を選択してください');
         return false;
@@ -446,7 +492,7 @@
       return true;
     }
 
-    function validateStep3() {
+    function validateStep4() {
       const name = document.getElementById('name').value;
       const phone = document.getElementById('phone').value;
       const experience = document.querySelector('input[name="experience"]:checked');
@@ -459,23 +505,86 @@
       return true;
     }
 
+    // スタッフリスト読み込み
+    async function loadStaffList() {
+      try {
+        const staffQuery = query(collection(db, 'staff'));
+        const querySnapshot = await getDocs(staffQuery);
+        
+        allStaff = [];
+        querySnapshot.forEach((doc) => {
+          allStaff.push({ id: doc.id, ...doc.data() });
+        });
+
+        let html = '';
+        allStaff.forEach(staff => {
+          html += `
+            <label class="lesson-card cursor-pointer">
+              <input type="radio" name="staffSelect" value="${staff.id}" class="peer hidden">
+              <div class="border-2 border-gray-200 rounded-lg p-4 md:p-6 peer-checked:border-blue-500 peer-checked:bg-blue-50">
+                <div class="flex items-center space-x-3">
+                  ${staff.photo ? `
+                    <img src="${staff.photo}" alt="${staff.name}" class="w-12 h-12 md:w-16 md:h-16 rounded-full object-cover">
+                  ` : `
+                    <div class="w-12 h-12 md:w-16 md:h-16 rounded-full bg-gray-200 flex items-center justify-center text-xl md:text-2xl font-bold">
+                      ${staff.name.charAt(0)}
+                    </div>
+                  `}
+                  <div class="flex-1">
+                    <h3 class="text-base md:text-lg font-bold text-gray-900">${staff.name}</h3>
+                    <p class="text-xs md:text-sm text-gray-600 mt-1">${staff.specialty.join('・')}</p>
+                  </div>
+                </div>
+              </div>
+            </label>
+          `;
+        });
+
+        document.getElementById('staffSelection').innerHTML = html || '<p class="text-gray-500 text-center py-8 col-span-2">スタッフが登録されていません</p>';
+        
+      } catch (error) {
+        console.error('スタッフ読み込みエラー:', error);
+        document.getElementById('staffSelection').innerHTML = '<p class="text-gray-500 text-center py-8 col-span-2">スタッフの読み込みに失敗しました</p>';
+      }
+    }
+
+    // バリデーション
+    function validateStep1() {
+      const lesson = document.querySelector('input[name="lessonType"]:checked');
+      if (!lesson) {
+        alert('レッスンタイプを選択してください');
+        return false;
+      }
+      return true;
+    }
+
+    function validateStep2() {
     // データ保存
     function saveStep1() {
       bookingData.lessonType = document.querySelector('input[name="lessonType"]:checked').value;
     }
 
-    function saveStep2() {
+    function saveStep3() {
       bookingData.date = selectedDate;
       bookingData.time = selectedTime;
     }
 
-    function saveStep3() {
+    function saveStep4() {
       bookingData.name = document.getElementById('name').value;
       bookingData.phone = document.getElementById('phone').value;
       bookingData.email = document.getElementById('email').value || '';
       bookingData.experience = document.querySelector('input[name="experience"]:checked').value;
       bookingData.payment = document.querySelector('input[name="payment"]:checked').value;
       bookingData.message = document.getElementById('message').value || '';
+      
+      // スタッフ情報を追加
+      if (selectedStaff && selectedStaff !== 'any') {
+        const staff = allStaff.find(s => s.id === selectedStaff);
+        if (staff) {
+          bookingData.staffId = selectedStaff;
+          bookingData.staffName = staff.name;
+        }
+      }
     }
 
     // カレンダー
@@ -576,7 +685,7 @@
       showTimeSlots();
       
       // 次へボタンを有効化
-      const btn = document.getElementById('step2Next');
+      const btn = document.getElementById('step3Next');
       btn.disabled = false;
       btn.className = 'bg-blue-500 hover:bg-blue-600 text-white px-6 md:px-8 py-2.5 md:py-3 rounded-lg font-bold transition text-sm md:text-base';
     };
@@ -604,6 +713,12 @@
             <span class="text-gray-600">日時</span>
             <span class="font-bold text-gray-900">${bookingData.date} ${bookingData.time}</span>
           </div>
+          ${bookingData.staffName ? `
+          <div class="flex justify-between py-3 border-b">
+            <span class="text-gray-600">担当スタッフ</span>
+            <span class="font-bold text-gray-900">${bookingData.staffName}</span>
+          </div>
+          ` : ''}
           <div class="flex justify-between py-3 border-b">
             <span class="text-gray-600">お名前</span>
             <span class="font-bold text-gray-900">${bookingData.name}</span>
