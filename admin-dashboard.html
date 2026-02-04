@@ -43,6 +43,10 @@
           <span>📊</span>
           <span>ダッシュボード</span>
         </button>
+        <button class="nav-btn w-full text-left px-4 py-3 rounded-lg font-medium text-sm flex items-center space-x-3" data-section="sales">
+          <span>💰</span>
+          <span>売上管理</span>
+        </button>
         <button class="nav-btn w-full text-left px-4 py-3 rounded-lg font-medium text-sm flex items-center space-x-3" data-section="calendar">
           <span>📅</span>
           <span>カレンダー</span>
@@ -140,6 +144,107 @@
         </div>
         <div id="recentBookings" class="p-6">
           <p class="text-gray-500 text-center py-8">読み込み中...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 売上管理 -->
+    <div id="salesSection" class="section hidden">
+      <!-- 売上サマリーカード -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-6 text-white shadow-lg">
+          <div class="flex items-center justify-between mb-4">
+            <div class="text-sm font-medium opacity-90">今月の売上</div>
+            <div class="bg-white bg-opacity-20 rounded-lg p-2">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+          </div>
+          <div class="text-3xl font-bold" id="monthSales">¥0</div>
+          <div class="text-sm opacity-80 mt-2" id="monthSalesCount">0件</div>
+        </div>
+
+        <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-6 text-white shadow-lg">
+          <div class="flex items-center justify-between mb-4">
+            <div class="text-sm font-medium opacity-90">今週の売上</div>
+            <div class="bg-white bg-opacity-20 rounded-lg p-2">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+              </svg>
+            </div>
+          </div>
+          <div class="text-3xl font-bold" id="weekSales">¥0</div>
+          <div class="text-sm opacity-80 mt-2" id="weekSalesCount">0件</div>
+        </div>
+
+        <div class="bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl p-6 text-white shadow-lg">
+          <div class="flex items-center justify-between mb-4">
+            <div class="text-sm font-medium opacity-90">今日の売上</div>
+            <div class="bg-white bg-opacity-20 rounded-lg p-2">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+              </svg>
+            </div>
+          </div>
+          <div class="text-3xl font-bold" id="todaySales">¥0</div>
+          <div class="text-sm opacity-80 mt-2" id="todaySalesCount">0件</div>
+        </div>
+
+        <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-6 text-white shadow-lg">
+          <div class="flex items-center justify-between mb-4">
+            <div class="text-sm font-medium opacity-90">平均単価</div>
+            <div class="bg-white bg-opacity-20 rounded-lg p-2">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+              </svg>
+            </div>
+          </div>
+          <div class="text-3xl font-bold" id="avgPrice">¥0</div>
+          <div class="text-sm opacity-80 mt-2">1件あたり</div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <!-- レッスン種類別売上 -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+          <div class="p-6 border-b border-gray-200">
+            <h3 class="text-lg font-bold text-gray-900">レッスン種類別売上</h3>
+          </div>
+          <div class="p-6">
+            <div id="lessonSalesChart" class="space-y-4">
+              <!-- レッスン種類別売上がここに表示されます -->
+            </div>
+          </div>
+        </div>
+
+        <!-- スタッフ別売上 -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+          <div class="p-6 border-b border-gray-200">
+            <h3 class="text-lg font-bold text-gray-900">スタッフ別売上</h3>
+          </div>
+          <div class="p-6">
+            <div id="staffSalesChart" class="space-y-4">
+              <!-- スタッフ別売上がここに表示されます -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 決済ステータス管理 -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+        <div class="p-6 border-b border-gray-200 flex justify-between items-center">
+          <h3 class="text-lg font-bold text-gray-900">決済ステータス</h3>
+          <div class="flex space-x-2">
+            <button onclick="filterPaymentStatus('all')" class="payment-filter-btn active px-4 py-2 rounded-lg text-sm font-medium">全て</button>
+            <button onclick="filterPaymentStatus('paid')" class="payment-filter-btn px-4 py-2 rounded-lg text-sm font-medium">支払済</button>
+            <button onclick="filterPaymentStatus('unpaid')" class="payment-filter-btn px-4 py-2 rounded-lg text-sm font-medium">未払い</button>
+          </div>
+        </div>
+        <div class="p-6">
+          <div id="paymentStatusList" class="space-y-3">
+            <!-- 決済ステータスリストがここに表示されます -->
+          </div>
         </div>
       </div>
     </div>
@@ -448,12 +553,281 @@
       }
     });
 
+    // 売上管理
+    async function loadSalesManagement() {
+      try {
+        const bookingsQuery = query(collection(db, 'bookings'), orderBy('date', 'asc'));
+        const querySnapshot = await getDocs(bookingsQuery);
+        
+        const bookings = [];
+        querySnapshot.forEach((doc) => {
+          bookings.push({ id: doc.id, ...doc.data() });
+        });
+
+        // 料金マッピング
+        const priceMap = {
+          '無料体験': 0,
+          'グループ': 3000,
+          '個人': 8000,
+          'カップル': 12000
+        };
+
+        // 各予約に料金を追加
+        const bookingsWithPrice = bookings.map(b => ({
+          ...b,
+          price: b.price || priceMap[b.lessonType] || 0,
+          paymentStatus: b.paymentStatus || 'unpaid'
+        }));
+
+        // 今日
+        const today = new Date().toISOString().split('T')[0];
+        const todayBookings = bookingsWithPrice.filter(b => b.date === today);
+        const todaySales = todayBookings.reduce((sum, b) => sum + b.price, 0);
+
+        // 今週
+        const now = new Date();
+        const weekStart = new Date(now.setDate(now.getDate() - now.getDay()));
+        weekStart.setHours(0, 0, 0, 0);
+        const weekEnd = new Date(weekStart);
+        weekEnd.setDate(weekEnd.getDate() + 6);
+        weekEnd.setHours(23, 59, 59, 999);
+        
+        const weekBookings = bookingsWithPrice.filter(b => {
+          const bookingDate = new Date(b.date);
+          return bookingDate >= weekStart && bookingDate <= weekEnd;
+        });
+        const weekSales = weekBookings.reduce((sum, b) => sum + b.price, 0);
+
+        // 今月
+        const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+        const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+        const monthBookings = bookingsWithPrice.filter(b => {
+          const bookingDate = new Date(b.date);
+          return bookingDate >= monthStart && bookingDate <= monthEnd;
+        });
+        const monthSales = monthBookings.reduce((sum, b) => sum + b.price, 0);
+
+        // 平均単価
+        const avgPrice = bookingsWithPrice.length > 0 
+          ? Math.round(bookingsWithPrice.reduce((sum, b) => sum + b.price, 0) / bookingsWithPrice.length)
+          : 0;
+
+        // 表示更新
+        document.getElementById('todaySales').textContent = `¥${todaySales.toLocaleString()}`;
+        document.getElementById('todaySalesCount').textContent = `${todayBookings.length}件`;
+        document.getElementById('weekSales').textContent = `¥${weekSales.toLocaleString()}`;
+        document.getElementById('weekSalesCount').textContent = `${weekBookings.length}件`;
+        document.getElementById('monthSales').textContent = `¥${monthSales.toLocaleString()}`;
+        document.getElementById('monthSalesCount').textContent = `${monthBookings.length}件`;
+        document.getElementById('avgPrice').textContent = `¥${avgPrice.toLocaleString()}`;
+
+        // レッスン種類別売上
+        displayLessonSales(monthBookings);
+
+        // スタッフ別売上
+        displayStaffSales(monthBookings);
+
+        // 決済ステータス
+        displayPaymentStatus(bookingsWithPrice);
+
+      } catch (error) {
+        console.error('売上データ読み込みエラー:', error);
+      }
+    }
+
+    // レッスン種類別売上表示
+    function displayLessonSales(bookings) {
+      const lessonTypes = ['無料体験', 'グループ', '個人', 'カップル'];
+      const colors = ['bg-gray-500', 'bg-blue-500', 'bg-green-500', 'bg-purple-500'];
+      
+      const salesByLesson = {};
+      lessonTypes.forEach(type => {
+        const typeBookings = bookings.filter(b => b.lessonType === type);
+        salesByLesson[type] = {
+          count: typeBookings.length,
+          total: typeBookings.reduce((sum, b) => sum + b.price, 0)
+        };
+      });
+
+      const maxSales = Math.max(...Object.values(salesByLesson).map(s => s.total));
+      
+      let html = '';
+      lessonTypes.forEach((type, index) => {
+        const data = salesByLesson[type];
+        const percentage = maxSales > 0 ? (data.total / maxSales) * 100 : 0;
+        
+        html += `
+          <div>
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-sm font-medium text-gray-700">${type}</span>
+              <span class="text-sm font-bold text-gray-900">¥${data.total.toLocaleString()}</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-3">
+              <div class="${colors[index]} h-3 rounded-full transition-all" style="width: ${percentage}%"></div>
+            </div>
+            <div class="text-xs text-gray-500 mt-1">${data.count}件</div>
+          </div>
+        `;
+      });
+      
+      document.getElementById('lessonSalesChart').innerHTML = html;
+    }
+
+    // スタッフ別売上表示
+    async function displayStaffSales(bookings) {
+      try {
+        const staffQuery = query(collection(db, 'staff'));
+        const staffSnapshot = await getDocs(staffQuery);
+        
+        const staffMap = {};
+        staffSnapshot.forEach((doc) => {
+          staffMap[doc.id] = doc.data().name;
+        });
+
+        const salesByStaff = {};
+        bookings.forEach(b => {
+          if (b.staffId && staffMap[b.staffId]) {
+            const staffName = staffMap[b.staffId];
+            if (!salesByStaff[staffName]) {
+              salesByStaff[staffName] = { count: 0, total: 0 };
+            }
+            salesByStaff[staffName].count++;
+            salesByStaff[staffName].total += b.price;
+          }
+        });
+
+        const maxSales = Math.max(...Object.values(salesByStaff).map(s => s.total), 1);
+        
+        let html = '';
+        if (Object.keys(salesByStaff).length === 0) {
+          html = '<p class="text-gray-500 text-center py-4">スタッフ別データがありません</p>';
+        } else {
+          const colors = ['bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-orange-500', 'bg-red-500', 'bg-pink-500'];
+          Object.entries(salesByStaff).forEach(([name, data], index) => {
+            const percentage = (data.total / maxSales) * 100;
+            
+            html += `
+              <div>
+                <div class="flex justify-between items-center mb-2">
+                  <span class="text-sm font-medium text-gray-700">${name}</span>
+                  <span class="text-sm font-bold text-gray-900">¥${data.total.toLocaleString()}</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-3">
+                  <div class="${colors[index % colors.length]} h-3 rounded-full transition-all" style="width: ${percentage}%"></div>
+                </div>
+                <div class="text-xs text-gray-500 mt-1">${data.count}件</div>
+              </div>
+            `;
+          });
+        }
+        
+        document.getElementById('staffSalesChart').innerHTML = html;
+        
+      } catch (error) {
+        console.error('スタッフ別売上エラー:', error);
+        document.getElementById('staffSalesChart').innerHTML = '<p class="text-gray-500 text-center py-4">データ読み込みエラー</p>';
+      }
+    }
+
+    // 決済ステータス表示
+    let allPaymentBookings = [];
+    let currentPaymentFilter = 'all';
+
+    function displayPaymentStatus(bookings) {
+      allPaymentBookings = bookings;
+      renderPaymentStatus();
+    }
+
+    function renderPaymentStatus() {
+      let filtered = allPaymentBookings;
+      
+      if (currentPaymentFilter === 'paid') {
+        filtered = allPaymentBookings.filter(b => b.paymentStatus === 'paid');
+      } else if (currentPaymentFilter === 'unpaid') {
+        filtered = allPaymentBookings.filter(b => b.paymentStatus === 'unpaid');
+      }
+
+      // 日付順にソート（新しい順）
+      filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+      let html = '';
+      if (filtered.length === 0) {
+        html = '<p class="text-gray-500 text-center py-8">該当するデータがありません</p>';
+      } else {
+        filtered.forEach(booking => {
+          const isPaid = booking.paymentStatus === 'paid';
+          const statusColor = isPaid ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
+          const statusText = isPaid ? '支払済' : '未払い';
+          
+          html += `
+            <div class="border rounded-lg p-4 flex items-center justify-between hover:bg-gray-50">
+              <div class="flex-1">
+                <div class="font-semibold text-gray-900">${booking.name}</div>
+                <div class="text-sm text-gray-600 mt-1">
+                  ${booking.date} ${booking.time} - ${booking.lessonType}
+                </div>
+              </div>
+              <div class="flex items-center space-x-4">
+                <div class="text-right">
+                  <div class="text-lg font-bold text-gray-900">¥${booking.price.toLocaleString()}</div>
+                  <div class="text-xs ${statusColor} px-2 py-1 rounded-full font-medium mt-1">${statusText}</div>
+                </div>
+                <button onclick="togglePaymentStatus('${booking.id}', '${booking.paymentStatus}')" 
+                  class="px-3 py-1 ${isPaid ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'} text-white rounded-lg text-sm font-medium transition">
+                  ${isPaid ? '未払いに' : '支払済に'}
+                </button>
+              </div>
+            </div>
+          `;
+        });
+      }
+      
+      document.getElementById('paymentStatusList').innerHTML = html;
+    }
+
+    window.filterPaymentStatus = function(filter) {
+      currentPaymentFilter = filter;
+      
+      // ボタンのアクティブ状態を更新
+      document.querySelectorAll('.payment-filter-btn').forEach(btn => {
+        btn.classList.remove('active', 'bg-blue-500', 'text-white');
+        btn.classList.add('bg-gray-100', 'text-gray-700');
+      });
+      event.target.classList.add('active', 'bg-blue-500', 'text-white');
+      event.target.classList.remove('bg-gray-100', 'text-gray-700');
+      
+      renderPaymentStatus();
+    };
+
+    window.togglePaymentStatus = async function(bookingId, currentStatus) {
+      const newStatus = currentStatus === 'paid' ? 'unpaid' : 'paid';
+      
+      try {
+        await updateDoc(doc(db, 'bookings', bookingId), {
+          paymentStatus: newStatus
+        });
+        
+        // ローカルデータを更新
+        const booking = allPaymentBookings.find(b => b.id === bookingId);
+        if (booking) {
+          booking.paymentStatus = newStatus;
+        }
+        
+        renderPaymentStatus();
+        
+      } catch (error) {
+        console.error('ステータス更新エラー:', error);
+        alert('ステータスの更新に失敗しました');
+      }
+    };
+
     // ナビゲーション
     document.querySelectorAll('.nav-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         // ページタイトル更新
         const titles = {
           'dashboard': 'ダッシュボード',
+          'sales': '売上管理',
           'calendar': 'カレンダー',
           'bookings': '予約管理',
           'staff': 'スタッフ管理',
@@ -475,6 +849,7 @@
         document.getElementById(section + 'Section').classList.remove('hidden');
 
         // セクションごとのデータ読み込み
+        if (section === 'sales') loadSalesManagement();
         if (section === 'calendar') loadCalendar();
         if (section === 'bookings') loadAllBookings();
         if (section === 'staff') loadStaffManagement();
@@ -1061,6 +1436,15 @@
 
     // 初期化時にactiveクラスを設定
     document.querySelector('.nav-btn.active').classList.add('bg-blue-50', 'text-blue-600');
+    
+    // 決済フィルターの初期状態
+    document.addEventListener('DOMContentLoaded', function() {
+      const firstFilter = document.querySelector('.payment-filter-btn.active');
+      if (firstFilter) {
+        firstFilter.classList.add('bg-blue-500', 'text-white');
+        firstFilter.classList.remove('bg-gray-100', 'text-gray-700');
+      }
+    });
     
     // 現在の日付を表示
     const today = new Date();
